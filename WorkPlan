@@ -8,12 +8,12 @@ Plan:
   Uses requests library instead of pycURL
   Imported libraries : 
     os (for environmental variables), json (for requests/responses), argparse, requests (for REST calls)
-  Main File :
-    executed with command line arguments to fill [API URL, App Name, Client ID, Client IP, Username, Password] into
-      environmental variables
-    Missing arguments are requested as raw input
+  3 Main Files (gisolve_token.py, gisolve_app.py, gisolve_job.py) :
+    executed with command line arguments to fill [API URL, App Name, Client ID, Client IP, Username, (Optional) Password], as well as additional arguments depending on file
+    Password drawn from permanent os info if not supplied
+    Missing arguments are not dealt with
+    Only print debug info/response data/etc. upon -v/--verbose request (maybe -d/--debug)
     Add terminating '/' to URL if non-existent
-    Uses a command-line system for user to call seperate utilities
   Demonstrate the use and integration of: 
     token issuing & revoking, 
     app registering/configuring,
