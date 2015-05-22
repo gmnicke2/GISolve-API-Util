@@ -90,7 +90,8 @@ def registerApp() :
 
 #configure app with config JSON read in from a file
 def configApp(config_filename) :
-	print "Config File: \"" + config_filename + "\""
+	if(os.environ.get('verbose') == 'True') :
+		print "Config File: \"" + config_filename + "\""
 	f = open(config_filename)
 	config = json.load(f)
 	f.close()
