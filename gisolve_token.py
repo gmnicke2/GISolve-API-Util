@@ -23,7 +23,6 @@ def printResponse(request_type, request_json, response_json) :
 def parseArgs() :
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-r", "--url", help="Set API URL")
-	parser.add_argument("-a", "--appname", help="Set App Name")
 	parser.add_argument("-c", "--clientid", help="Set Client ID")
 	parser.add_argument("-i", "--clientip", help="Set Client IP")
 	parser.add_argument("-u", "--username", help="Set Username")
@@ -34,7 +33,7 @@ def parseArgs() :
 	args = parser.parse_args()
 	os.environ['verbose'] = str(args.verbose)
 	#print help and exit if not all args supplied
-	if not bool(args.url and args.appname and args.clientid and args.clientip and args.username and args.action) :
+	if not bool(args.url and args.clientid and args.clientip and args.username and args.action) :
 		parser.print_help()
 		exit()
 	#create environmental variables for existing and non-existing arguments
