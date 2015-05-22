@@ -11,7 +11,7 @@ Plan:
   3 Main Files (gisolve_token.py, gisolve_app.py, gisolve_job.py) :
     executed with command line arguments to fill [API URL, App Name, Client ID, Client IP, Username, (Optional) Password], as well as additional arguments depending on file
     Password drawn from permanent os info if not supplied
-    Missing arguments are not dealt with
+    Missing arguments cause help to be printed and exit
     Only print debug info/response data/etc. upon -v/--verbose request (maybe -d/--debug)
     Add terminating '/' to URL if non-existent
   Demonstrate the use and integration of: 

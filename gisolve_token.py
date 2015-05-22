@@ -14,12 +14,10 @@ def printResponse(request_type, request_json, response_json) :
 		print request_type + " Request Failed\n"
 		return None
 	request_json['password'] = '*******'
-	print "===================" + "\n"
-	print "URL: " + os.environ.get('url') + "\n"
+	print "\nURL: " + os.environ.get('url') + "\n"
 	print "Request: " + request_type + "\n"
 	print "Request Data (in JSON format): " + json.dumps(request_json) + "\n"
 	print "Response (in JSON format): " + json.dumps(response_json) + "\n"
-	print "===================" + "\n"
 
 #parses command line arguments (gives help if done incorrectly)
 def parseArgs() :
