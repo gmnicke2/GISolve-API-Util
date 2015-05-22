@@ -30,7 +30,7 @@ def parseArgs() :
 	parser.add_argument("-i", "--clientip", help="Set Client IP")
 	parser.add_argument("-u", "--username", help="Set Username")
 	parser.add_argument("-p", "--password", help="Set Password")
-	parser.add_argument("--action", help="issue/verify/revoke Token")
+	parser.add_argument("-act", "--action", help="issue/verify/revoke Token")
 	parser.add_argument("-t", "--token", help="For Verify/Revoke, Set Token")
 	parser.add_argument("-v", "--verbose",action="store_true", help="Print results/errors")
 	args = parser.parse_args()
