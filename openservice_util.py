@@ -35,8 +35,8 @@ def parseArgs() :
 	parser.add_argument("-u", "--username", help="Set Username")
 	parser.add_argument("-p", "--password", help="Set Password")
 	args = parser.parse_args()
-	#print help and exit if no args supplied
-	if not bool(args.url or args.appname or args.clientid or args.password or args.clientip or args.username) :
+	#print help and exit if not all args supplied
+	if not bool(args.url and args.appname and args.clientid and args.clientip and args.username) :
 		parser.print_help()
 		exit()
 	#create environmental variables for existing and non-existing arguments
