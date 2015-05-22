@@ -1,0 +1,22 @@
+
+Goal:
+  Create an example of using CyberGIS OpenService API that visibly and smoothly demonstrates
+  how various API functions (Security/Integration/Computation) and REST calls work, combine, and rely on each other.
+  
+Plan:
+  Written in Python
+  Uses requests library instead of pycURL
+  Imported libraries : 
+    os (for environmental variables), json (for requests/responses), argparse, requests (for REST calls)
+  Main File :
+    executed with command line arguments to fill [API URL, App Name, Client ID, Client IP, Username, Password] into
+      environmental variables
+    Missing arguments are requested as raw input
+    Add terminating '/' to URL if non-existent
+    Uses a command-line system for user to call seperate utilities
+  Demonstrate the use and integration of: 
+    token issuing & revoking, 
+    app registering/configuring,
+    retrieving app info/config,
+    launching/monitoring a job,
+    retrieving job output
