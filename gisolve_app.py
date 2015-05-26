@@ -27,11 +27,11 @@ def printResponse(request_type, request_json, response_json) :
 # parses command line arguments (gives help if done incorrectly)
 def parseArgs() :
 	parser = argparse.ArgumentParser()
+	parser.add_argument("-v", "--verbose",action="store_true", help="Print results/errors")
 	parser.add_argument("-r", "--url", help="Set API URL")
 	parser.add_argument("-a", "--appname", help="Set App Name")
 	parser.add_argument("-act", "--action", help="register/configure/getinfo/getconfig for App")
 	parser.add_argument("-t", "--token", help="Set Token")
-	parser.add_argument("-v", "--verbose",action="store_true", help="Print results/errors")
 	parser.add_argument("-u", "--username",help="Set Username")
 	parser.add_argument("-cf", "--configfile", help="(For configure app) config JSON file path")
 	parser.add_argument("-df", "--destfile", help="(For get config/info) file to write configuration/info JSON to")
