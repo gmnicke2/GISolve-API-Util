@@ -28,7 +28,7 @@ def printResponse(request_type, request_json, response_json) :
 def parseArgs() :
 	global verbose
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-v", "--verbose",action="store_true", help="Print results/errors")
+	parser.add_argument("-v", "--verbose",action="store_true", help="Print results/errors to stdout")
 	parser.add_argument("-r", "--url", help="Set API URL")
 	parser.add_argument("-c", "--clientid", help="Set Client ID (For Verify Token)")
 	parser.add_argument("-i", "--clientip", help="Set Client IP (For Verify Token)")
@@ -80,8 +80,6 @@ def issueToken() :
 	#Revoke would use DELETE, Verify would use PUT
 	try :
 		request_ret = requests.post(URL,data=request_json,timeout=50,verify=False);
-	except (InsecureRequestWarning) :
-		print ''
 	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
 		exit()
