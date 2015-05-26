@@ -49,7 +49,7 @@ def parseArgs() :
 	# append a terminating '/' if non-existent in API URL
 	if not os.environ['url'].endswith('/') :
 		os.environ['url'] += '/'
-	return parser
+	return (parser,args)
 
 ############################API CALLS##################################
 # Register an app, must have a valid token
@@ -158,8 +158,9 @@ def getAppConfig(dest_filename) :
 	return True
 
 def main() :
-	parser = parseArgs()
-	args = parser.parse_args()
+	parser_info = parseArgs()
+	parser = parser_info[0]
+	args = parser_info[1]
 	action = os.environ.get('action').lower()
 	if action == 'register' :
 		registerApp()
