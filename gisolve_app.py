@@ -60,10 +60,10 @@ def registerApp() :
 	# Set up request JSON
 	request_json = {
 		'token' : os.environ.get('token'),
-		'app' : os.environ.get('app'),
+		'app' : os.environ.get('appname'),
 		'longname' : 'Test app by %s' % os.environ.get('username'),
 		'version' : 'V0.1',
-		'info' : '<h2>%s</h2><p>Description of App (%s) Goes Here</p><p>Author: %s</p>' % (appname,appname,username),
+		'info' : '<h2>%s</h2><p>Description of App (%s) Goes Here</p><p>Author: %s</p>' % (os.environ.get('appname'),os.environ.get('appname'),os.environ.get('username')),
 		'author' : os.environ.get('username'),
 		'tags' : 'test, app, %s' % os.environ.get('username')
 	}
@@ -82,14 +82,14 @@ def registerApp() :
 	try :
 		return response_json['result']['app']
 	except (TypeError,KeyError) :
-		print "App Registration failed for \"%s\"" %os.environ.get('appname')
+		print "\nApp Registration failed for \"%s\"" %os.environ.get('appname')
 		print "Did you issue a valid token?"
 		return None
 
 # get app info and write it in JSON format to the destfile given as argument
 def getAppInfo(dest_filename) :
 	if(os.environ.get('verbose') == 'True') :
-		print "Writing info to \"" + dest_filename + "\""
+		print "\nWriting info to \"" + dest_filename + "\""
 	request_json = {
 		'token' : os.environ.get('token'),
 		'app' : os.environ.get('appname')
@@ -113,7 +113,7 @@ def getAppInfo(dest_filename) :
 # configure app with config JSON read in from a file
 def configApp(config_filename) :
 	if(os.environ.get('verbose') == 'True') :
-		print "Config File: \"" + config_filename + "\""
+		print "\nConfig File: \"" + config_filename + "\""
 	f = open(config_filename)
 	config = json.load(f)
 	f.close()
@@ -123,7 +123,7 @@ def configApp(config_filename) :
 	request_json = {
 		'token' : os.environ.get('token'),
 		'app' : os.environ.get('appname'),
-		'config' : json.dumps(config)
+		'config' : json.dumps(config,indent=4,separators=(',',': '))
 	}
 	# append resource (appconfig) to API URL
 	url = os.environ.get('url') + "appconfig"
@@ -133,7 +133,31 @@ def configApp(config_filename) :
 	response_json = request_ret.json
 	if(os.environ.get('verbose') == 'True') :
 		printResponse('Configure app  \"%s\" (HTTP POST)' %os.environ.get('appname'), request_json, response_json)
-	# if correctly configured, return true
+	# If correctly configured, return true
+	return True
+
+# get app config and write it in JSON format to the destfile given as an argument
+def getAppConfig(dest_filename) :
+	if(os.environ.get('verbose') == 'True') :
+		print '\nWriting config to \"' + dest_filename + '\"'
+	request_json = {
+		'token' : os.environ.get('token'),
+		'app' : os.environ.get('appname')
+	}
+	# append resource (appconfig) to API URL
+	url = os.environ.get('url') + "appconfig"
+	# Make a GET RESTful call
+	request_ret = requests.get(url, params=request_json,timeout=50, verify=False)
+	# Get the response from the REST GET in JSON format (will be written to dest file)
+	response_json = request_ret.json
+	if(os.environ.get('verbose') == 'True') :
+		printResponse('Get app config for \"%s\" (HTTP GET)' %os.environ.get('appname'), request_json, response_json)
+	# Dump the response JSON (the app config) into the destination file
+	with open(dest_filename, 'w') as outfile :
+		json.dump(response_json,outfile,indent=4,separators=(',',': '))
+		outfile.write('\n')
+		outfile.close()
+	# If successful, return True
 	return True
 
 def main() :
@@ -152,9 +176,18 @@ def main() :
 		# check if destination file was specified in command-line arguments
 		if args.destfile :
 			getAppInfo(args.destfile)
-		elif not os.path.exists("getinfo_out.dat") : # use this path as default
-			getappInfo("getinfo_out.dat")
-		else : # is default path exists, don't overwrite it, just print help & exit
+		elif not os.path.exists("getinfo_out.json") : # use this path as default
+			getAppInfo("getinfo_out.json")
+		else : # if default path exists, don't overwrite it, just print help & exit
+			parser.print_help()
+			exit()
+	elif action == 'getconfig' :
+		# check if destination file was specified in command-line arguments
+		if args.destfile :
+			getAppConfig(args.destfile)
+		elif not os.path.exists("getconfig_out.json") : # use this path as default
+			getAppConfig("getconfig_out.json")
+		else : # if default path exists, don't overwrite it, just print help & exit
 			parser.print_help()
 			exit()
 	else :
