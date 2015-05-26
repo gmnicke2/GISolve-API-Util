@@ -139,7 +139,7 @@ def configApp(config_filename) :
 def main() :
 	parser = parseArgs()
 	args = parser.parse_args()
-	action = os.environ['action'].lower()
+	action = os.environ.get('action').lower()
 	if action == 'register' :
 		registerApp()
 	elif action == 'configure' :
@@ -152,9 +152,9 @@ def main() :
 		# check if destination file was specified in command-line arguments
 		if args.destfile :
 			getAppInfo(args.destfile)
-		elif not os.path.exists("getinfo_out.dat") :
+		elif not os.path.exists("getinfo_out.dat") : # use this path as default
 			getappInfo("getinfo_out.dat")
-		else :
+		else : # is default path exists, don't overwrite it, just print help & exit
 			parser.print_help()
 			exit()
 	else :
