@@ -23,8 +23,8 @@ def printResponse(request_type, request_json, response_json) :
 def parseArgs() :
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-r", "--url", help="Set API URL")
-	parser.add_argument("-c", "--clientid", help="Set Client ID")
-	parser.add_argument("-i", "--clientip", help="Set Client IP")
+	parser.add_argument("-c", "--clientid", help="Set Client ID (For Verify Token)")
+	parser.add_argument("-i", "--clientip", help="Set Client IP (For Verify Token)")
 	parser.add_argument("-u", "--username", help="Set Username")
 	parser.add_argument("-p", "--password", help="Set Password (Optional. Taken from Bash Environment if not given)")
 	parser.add_argument("-act", "--action", help="issue/verify/revoke Token")
@@ -32,8 +32,8 @@ def parseArgs() :
 	parser.add_argument("-v", "--verbose",action="store_true", help="Print results/errors")
 	args = parser.parse_args()
 	os.environ['verbose'] = str(args.verbose)
-	#print help and exit if not all args supplied
-	if not bool(args.url and args.clientid and args.clientip and args.username and args.action) :
+	#print help and exit if not all required args supplied
+	if not bool(args.url and args.username and args.action) :
 		parser.print_help()
 		exit()
 	#create environmental variables for existing and non-existing arguments
@@ -44,7 +44,7 @@ def parseArgs() :
 	#append a terminating '/' if non-existent in API URL
 	if not os.environ['url'].endswith('/') :
 		os.environ['url'] += '/'
-	return parser
+	return (parser,args)
 
 ############################API CALLS##################################
 #issue token
@@ -117,7 +117,9 @@ def revokeToken() :
 		return False
 
 def main() :
-	parser = parseArgs()
+	parser_info = parseArgs()
+	parser = parser_info[0]
+	args = parser_info[1]
 	action = os.environ.get('action').lower()
 	if action == "issue" :
 		issueToken()
@@ -128,7 +130,11 @@ def main() :
 			parser.print_help()
 			exit()
 		if action == "verify" :
-			verifyToken()
+			if args.clientid and args.clientip : #only verify if user gave client ID and IP
+				verifyToken()
+			else :
+				parser.print_help()
+				exit()
 		elif action == "revoke" :
 			revokeToken()
 		else :
