@@ -59,19 +59,29 @@ def launchJob(config_filename) :
 		return None
 	request_json = {
 		'token' : os.environ.get('token'),
+		'name' : os.environ.get('jobname'),
 		'app' : os.environ.get('appname'),
+		'owner' : os.environ.get('owner'),
 		'config' : json.dumps(config,indent=4,separators=(',',': '))
 	}
-	# append resource (appconfig) to API URL
-	url = os.environ.get('url') + "appconfig"
+	# append resource to API URL
+	url = os.environ.get('url') 
 	# Make RESTful POST call
 	request_ret = requests.post(url,data=request_json,timeout=50,verify=False)
 	# Get the response from the REST POST in JSON format
 	response_json = request_ret.json()
-	if(os.environ.get('verbose') == 'True') :
-		printResponse('Configure app  \"%s\" (HTTP POST)' %os.environ.get('appname'), request_json, response_json)
-	# If correctly configured, return true
-	return True
+	return response_json['result']['id']
+	
+	#if(os.environ.get('verbose') == 'True') :
+	#	print "??"
+	# on success, return the new job's name
+	#try :
+	#	return response_json['result']['id']
+	#except (TypeError,KeyError) :
+	#	print "\nJob launch failed for \"%s\"" %os.environ.get('jobname')
+	#	print "Did you issue a valid token?"
+	#	return None
+	
 
 #monitors job by returning status of submitted job
 def monitorJob() :
