@@ -12,7 +12,7 @@ def main() :
 	if not args.url.endswith('/') :
 		args.url += '/'
 	request_ret = requests.get(args.url+'version',timeout=50,verify=False)
-	response_json = request_ret.json
+	response_json = request_ret.json()
 	try :
 		print 'API Version: %s' %(response_json['version'])
 	except (KeyError,TypeError) :
