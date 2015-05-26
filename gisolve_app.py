@@ -77,9 +77,9 @@ def registerApp() :
 		printResponse('Register App \"%s\" (HTTP POST)' %os.environ.get('appname'), request_json, response_json)
 	# on success, return the registered app's name
 	try :
-		return response_json['result']['app']
+		return response_json['result']['id']
 	except (TypeError,KeyError) :
-		print "\nApp Registration failed for \"%s\"" %os.environ.get('appname')
+		print "\nJob launch failed for \"%s\"" %os.environ.get('jobname')
 		print "Did you issue a valid token?"
 		return None
 

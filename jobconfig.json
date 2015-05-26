@@ -1,0 +1,11 @@
+{
+   "parameters":   {
+            "param0": "10",
+            "param1": "10",
+            "param2": "6",
+            "param3": "http://cybergis.org/sampledata/somedata.dat"
+        },
+    "options":   {
+            "disjoint0 ": "disjointItem1"
+        }
+}
