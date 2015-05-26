@@ -49,17 +49,16 @@ def parseArgs() :
 ############################API CALLS##################################
 #issue token
 def issueToken() :
-	url = os.environ.get('url')
 	#A sample issue token request JSON
 	request_json = {'username' : os.environ.get('username'),
-		'password' : os.environ.get('password'),
+		'password' : os.getenv('password',os.environ.get('NCSAPW')),#get PW from bash variable NCSAPW if password not input through argument
 		'lifetime' : 15*3600,
 		'binding' : 1
 	}
 	#Need to append "token" to the API URL
 	resource = "token"
 	#Append resource ("token") to URL
-	url += resource
+	url = os.environ.get('url') + resource
 	#Make RESTful POST call to "token" resource
 	#Revoke would use DELETE, Verify would use PUT
 	request_ret = requests.post(url,data=request_json,timeout=50,verify=False);
@@ -98,21 +97,20 @@ def verifyToken() :
 	else :
 		return False
 
-#revoke token
+# revoke token
 def revokeToken() :
-	url = os.environ.get('url')
 	request_json = {
 		'username' : os.environ.get('username'),
-    		'password' : os.environ.get('password'),
+    		'password' : os.getenv('password',os.environ.get('NCSAPW')),
 		'token' : os.environ.get('token')
 	}
 	resource = "token"
-	url += resource
+	url = os.environ.get('url') + resource
 	request_ret = requests.delete(url,params=request_json,timeout=50,verify=False)
 	response_json = request_ret.json
-	if(os.environ['verbose'] == 'True') :
+	if(os.environ.get('verbose') == 'True') :
 		printResponse('Revoke Token \"%s\" (HTTP DELETE)' %os.environ.get('token'),request_json,response_json)
-	#Token was revoked successfully, so store empty string as environ token
+	# Token was revoked successfully, so store empty string as environ token
 	if response_json['status'] == 'success' :
 		os.environ['token'] = ''
 		return True
@@ -121,13 +119,13 @@ def revokeToken() :
 
 def main() :
 	parser = parseArgs()
-	action = os.environ['action'].lower()
+	action = os.environ.get('action').lower()
 	if action == "issue" :
 		issueToken()
 	else :
 		try :
-			token = os.environ['token']
-		except KeyError :
+			token = os.environ.get('token') # check if accessing token give err
+		except KeyError : # token wasn't given as an argument
 			parser.print_help()
 			exit()
 		if action == "verify" :
