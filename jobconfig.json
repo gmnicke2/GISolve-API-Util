@@ -5,7 +5,7 @@
             "param2": "6",
             "param3": "http://cybergis.org/sampledata/somedata.dat"
         }
-    "options": {
+    "options":   {
             "disjoint0 ": "disjointItem1"
         }
 }
