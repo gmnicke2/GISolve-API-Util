@@ -36,7 +36,7 @@ def parseArgs() :
 	parser.add_argument("-df", "--destfile", help="(For get config/info) file to write configuration/info JSON to")
 	args = parser.parse_args()
 	os.environ['verbose'] = str(args.verbose)
-	# print help and exit if not all args supplied
+	# print help and exit if not all required args supplied
 	if not bool(args.url and args.appname and args.action and args.token) :
 		parser.print_help()
 		exit()

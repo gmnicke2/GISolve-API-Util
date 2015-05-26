@@ -20,3 +20,4 @@ Plan:
     retrieving app info/config,
     launching/monitoring a job,
     retrieving job output
+  There is also a "gisolve_version.py" where the user supplies API URL and the version is retrieved
