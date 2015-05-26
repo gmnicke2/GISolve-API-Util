@@ -7,10 +7,12 @@ Plan:
   Written in Python
   Uses requests library instead of pycURL
   Imported libraries : 
-    os (for environmental variables), json (for requests/responses), argparse, requests (for REST calls)
+    os (for environmental variables), sys(for stderr writing), json (for requests/responses), argparse, requests (for REST calls), getpass (if user wants to specify a password)
   3 Main Files (gisolve_token.py, gisolve_app.py, gisolve_job.py) :
-    executed with command line arguments to fill [API URL, App Name, Client ID, Client IP, Username, (Optional) Password], as well as additional arguments depending on file
-    Password drawn from permanent os info if not supplied
+    executed with either command line arguments to fill [API URL, App Name, Client ID, Client IP, Username, (Optional) Password], as well as additional arguments depending on file
+        OR TAKEN IN FROM BASH ENVIRONMENTAL VARIABLES
+    All arguments drawn from bash env variables unless otherwise supplied
+	EXCEPT for verbose & dest/config/jobconfig files
     Missing arguments cause help to be printed and exit
     Only print debug info/response data/etc. upon -v/--verbose request
     Add terminating '/' to URL if non-existent
@@ -21,3 +23,65 @@ Plan:
     launching/monitoring a job,
     retrieving job output
   There is also a "gisolve_version.py" where the user supplies API URL and the version is printed
+
+__________________________
+Desired Example Use
+__________________________
+
+For usage for any utility:
+python cg_[util].py -h
+
+TOKEN UTILITY :
+
+IN BASH SHELL (or in ~/.bashrc):
+export CG_USERNAME="_____"
+export CG_PASSWORD="_____"
+export CG_API_URL="https://sandbox.cigi.illinois.edu/home/rest/"
+(for verify :)
+export CG_CLIENT_ID="_____"
+export CG_CLIENT_IP="[public IP address]"
+
+Token Issue: 
+python cg_token.py -act issue [-v if verbose desired] [-p if different password]
+
+ALTERNATIVELY:
+export CG_TOKEN=`python cg_token.py -act issue`
+(This issues a token and saves to bash env in one line)
+
+Token Verify or revoke:
+python cg_token.py -act [verify/revoke]
+
+APP UTILITY :
+
+export CG_USERNAME="_____"
+export CG_API_URL="https://sandbox.cigi.illinois.edu/home/rest/"
+export CG_APP_NAME="[app name]"
+
+App Register:
+python cg_app.py -act register --name=[app to register]
+
+ALTERNATIVELY:
+export CG_APP_NAME=`python cg_app.py -act register --name=[app to register]`
+(This registers an app and saves its name to bash env in one line)
+
+App Configure:
+python cg_app.py -act configure -cf [config JSON file path]
+
+Get App Info/Config:
+python cg_app.py -act [getinfo/getconfig] -df [destination path to write JSON response to]
+
+JOB UTILITY :
+
+export CG_USERNAME="_____"
+export CG_API_URL="https://sandbox.cigi.illinois.edu/home/rest/"
+export CG_APP_NAME="[app name]" (could already exist if app registered this session)
+export CG_JOB_NAME="[job name]"
+
+Job Launch :
+python cg_job.py -act launch --name="[job name to launch]" (TODO: flags for job config)
+
+ALTERNATIVELY:
+export CG_JOB_ID=`python cg_job.py -act launch --name=[job name to register]`
+(This launches a job and saves its id to bash env in one line)
+
+TODO: last 2 job funcs

@@ -35,7 +35,7 @@ def parseArgs() :
 	parser.add_argument("-v", "--verbose",action="store_true", help="Print results/errors to stdout")
 	parser.add_argument("-r", "--url", help="Set API URL")
 	parser.add_argument("-u", "--username", help="Set Username")
-
+	parser.add_argument("-a", "--appname", help="Set App Name")
 	parser.add_argument("-act", "--action", help="(REQUIRED) register/configure/getinfo/getconfig")
 	parser.add_argument("-t", "--token", help="Set Token")
 	parser.add_argument("-cf","--configfile", help="For action \'configure\' config file in JSON format")
@@ -207,7 +207,7 @@ def main() :
 	args = parser_info[1]
 	action = os.getenv('CG_ACTION','None').lower()
 	if action == 'register' :
-		registerApp()
+		print registerApp()
 	elif action == 'configure' :
 		# check if config file was given or if it's invalid
 		if args.configfile and os.path.exists(args.configfile) :
