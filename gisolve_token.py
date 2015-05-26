@@ -16,8 +16,8 @@ def printResponse(request_type, request_json, response_json) :
 	request_json['password'] = '*******'
 	print "\nURL: " + os.environ.get('url') + "\n"
 	print "Request: " + request_type + "\n"
-	print "Request Data (in JSON format): " + json.dumps(request_json) + "\n"
-	print "Response (in JSON format): " + json.dumps(response_json) + "\n"
+	print "Request Data (in JSON format): " + json.dumps(request_json,indent=4,separators=(',', ': ')) + "\n"
+	print "Response (in JSON format): " + json.dumps(response_json,indent=4,separators=(',', ': ')) + "\n"
 
 #parses command line arguments (gives help if done incorrectly)
 def parseArgs() :
@@ -26,7 +26,7 @@ def parseArgs() :
 	parser.add_argument("-c", "--clientid", help="Set Client ID")
 	parser.add_argument("-i", "--clientip", help="Set Client IP")
 	parser.add_argument("-u", "--username", help="Set Username")
-	parser.add_argument("-p", "--password", help="Set Password")
+	parser.add_argument("-p", "--password", help="Set Password (Optional. Taken from Bash Environment if not given)")
 	parser.add_argument("-act", "--action", help="issue/verify/revoke Token")
 	parser.add_argument("-t", "--token", help="For Verify/Revoke, Set Token")
 	parser.add_argument("-v", "--verbose",action="store_true", help="Print results/errors")
