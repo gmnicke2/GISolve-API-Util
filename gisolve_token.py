@@ -76,7 +76,6 @@ def issueToken() :
 
 #verify token
 def verifyToken() :
-	url = os.environ.get('url')
 	request_json = {
 		'consumer' : os.environ.get('clientid'),
 		'remote_addr' : os.environ.get('clientip'),
@@ -85,7 +84,7 @@ def verifyToken() :
 		'authrequest' : 'default'
 	}
 	resource = "token"
-	url += resource
+	url = os.environ.get('url') + resource
 	#Set HTTP Header
 	headers = {'Content-Length' : str(len(json.dumps(request_json)))}
 	request_ret = requests.put(url,params=request_json,headers=headers,timeout=50,verify=False)
