@@ -120,7 +120,7 @@ def configApp(config_filename) :
 	request_json = {
 		'token' : os.environ.get('token'),
 		'app' : os.environ.get('appname'),
-		'config' : json.dumps(config,indent=4,separators=(',',': '))
+		'config' : json.dumps(config)
 	}
 	# append resource (appconfig) to API URL
 	url = os.environ.get('url') + "appconfig"
