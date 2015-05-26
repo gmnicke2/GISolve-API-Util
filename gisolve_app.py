@@ -32,12 +32,13 @@ def parseArgs() :
 	parser.add_argument("-act", "--action", help="register/configure/getinfo/getconfig for App")
 	parser.add_argument("-t", "--token", help="Set Token")
 	parser.add_argument("-v", "--verbose",action="store_true", help="Print results/errors")
+	parser.add_argument("-u", "--username",help="Set Username")
 	parser.add_argument("-cf", "--configfile", help="(For configure app) config JSON file path")
 	parser.add_argument("-df", "--destfile", help="(For get config/info) file to write configuration/info JSON to")
 	args = parser.parse_args()
 	os.environ['verbose'] = str(args.verbose)
 	# print help and exit if not all required args supplied
-	if not bool(args.url and args.appname and args.action and args.token) :
+	if not bool(args.url and args.appname and args.action and args.token and args.username) :
 		parser.print_help()
 		exit()
 	# create environmental variables for existing and non-existing arguments
@@ -71,7 +72,7 @@ def registerApp() :
 	# Get app information/configuration are GET calls
 	request_ret = requests.post(url,data=request_json,timeout=50,verify=False)
 	# Get the response from the REST POST in JSON format
-	response_json = request_ret.json
+	response_json = request_ret.json()
 	if(os.environ.get('verbose') == 'True') :
 		printResponse('Register App \"%s\" (HTTP POST)' %os.environ.get('appname'), request_json, response_json)
 	# on success, return the registered app's name
@@ -95,7 +96,7 @@ def getAppInfo(dest_filename) :
 	# Make a GET RESTful call
 	request_ret = requests.get(url, params=request_json,timeout=50,verify=False)
 	# Get the response from the REST GET in JSON format (will be written to dest file)
-	response_json = request_ret.json
+	response_json = request_ret.json()
 	if(os.environ.get('verbose') == 'True') :
 		printResponse('Get app info for \"%s\" (HTTP GET)' %os.environ.get('appname'), request_json, response_json)
 	# Dump the response JSON (the app info) into the destination file
@@ -126,7 +127,7 @@ def configApp(config_filename) :
 	# Make RESTful POST call
 	request_ret = requests.post(url,data=request_json,timeout=50,verify=False)
 	# Get the response from the REST POST in JSON format
-	response_json = request_ret.json
+	response_json = request_ret.json()
 	if(os.environ.get('verbose') == 'True') :
 		printResponse('Configure app  \"%s\" (HTTP POST)' %os.environ.get('appname'), request_json, response_json)
 	# If correctly configured, return true
@@ -145,7 +146,7 @@ def getAppConfig(dest_filename) :
 	# Make a GET RESTful call
 	request_ret = requests.get(url, params=request_json,timeout=50, verify=False)
 	# Get the response from the REST GET in JSON format (will be written to dest file)
-	response_json = request_ret.json
+	response_json = request_ret.json()
 	if(os.environ.get('verbose') == 'True') :
 		printResponse('Get app config for \"%s\" (HTTP GET)' %os.environ.get('appname'), request_json, response_json)
 	# Dump the response JSON (the app config) into the destination file

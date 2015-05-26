@@ -63,7 +63,7 @@ def issueToken() :
 	#Revoke would use DELETE, Verify would use PUT
 	request_ret = requests.post(url,data=request_json,timeout=50,verify=False);
 	#Get the response from the REST POST in JSON format
-	response_json = request_ret.json
+	response_json = request_ret.json()
 	try :
 		os.environ['token'] = response_json['result']['token']
 	except (TypeError,KeyError) :
@@ -88,7 +88,7 @@ def verifyToken() :
 	#Set HTTP Header
 	headers = {'Content-Length' : str(len(json.dumps(request_json)))}
 	request_ret = requests.put(url,params=request_json,headers=headers,timeout=50,verify=False)
-	response_json = request_ret.json
+	response_json = request_ret.json()
 	if(os.environ['verbose'] == 'True') :
 		printResponse('Verify Token (HTTP PUT)',request_json,response_json)
 	if request_json['status'] == 'success' :
@@ -106,7 +106,7 @@ def revokeToken() :
 	resource = "token"
 	url = os.environ.get('url') + resource
 	request_ret = requests.delete(url,params=request_json,timeout=50,verify=False)
-	response_json = request_ret.json
+	response_json = request_ret.json()
 	if(os.environ.get('verbose') == 'True') :
 		printResponse('Revoke Token \"%s\" (HTTP DELETE)' %os.environ.get('token'),request_json,response_json)
 	# Token was revoked successfully, so store empty string as environ token
