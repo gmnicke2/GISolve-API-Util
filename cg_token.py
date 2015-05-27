@@ -129,7 +129,7 @@ def verifyToken() :
 		exit()
 	response_json = request_ret.json()
 	if(verbose) :
-		printResponse('Verify Token (HTTP PUT)',request_json,response_json)
+		printResponse('Verify Token \"%s\" (HTTP PUT)' %(TOKEN),request_json,response_json)
 	if request_json['status'] == 'success' :
 		return True
 	else :
@@ -162,7 +162,7 @@ def revokeToken() :
 		exit()
 	response_json = request_ret.json()
 	if(verbose) :
-		printResponse('Revoke Token \"%s\" (HTTP DELETE)' %os.environ.get('token'),request_json,response_json)
+		printResponse('Revoke Token \"%s\" (HTTP DELETE)' %TOKEN,request_json,response_json)
 	# Token was revoked successfully, so store empty string as environ token
 	if response_json['status'] == 'success' :
 		os.environ['token'] = ''
