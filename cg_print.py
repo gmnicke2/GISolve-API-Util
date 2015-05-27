@@ -18,5 +18,8 @@ def check_for_response_errors(response_json) :
 		exit()
 	if(status != 'success') :
 		sys.stderr.write("Request Failed\n")
-		sys.stderr.write("Error %d: %s\n" %(response_json['result']['error_code'],response_json['result']['message']))
+		sys.stderr.write("Error %d: %s\n" 
+			%(response_json['result']['error_code'],
+			response_json['result']['message'])
+			)
 		exit()
