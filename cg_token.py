@@ -26,14 +26,24 @@ verbose = False
 def parseArgs() :
 	global verbose
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-v", "--verbose",action="store_true", help="Print results/errors to stdout")
-	parser.add_argument("-p", "--password", help="Choose to enter different Password",action="store_true")
-	parser.add_argument("-act", "--action", help="(REQUIRED) issue/verify/revoke Token")
-	parser.add_argument("-r", "--url", help="Set API URL")
-	parser.add_argument("-c", "--clientid", help="Set Client ID (For Verify Token)")
-	parser.add_argument("-i", "--clientip", help="Set Client IP (For Verify Token)")
-	parser.add_argument("-u", "--username", help="Set Username")
-	parser.add_argument("-t", "--token", help="For Verify/Revoke, Set Token")
+	parser.add_argument("-v", "--verbose",
+		action="store_true", 
+		help="Print results/errors to stdout")
+	parser.add_argument("-p", "--password",
+		action="store_true", 
+		help="Choose to enter different Password")
+	parser.add_argument("-act", "--action", 
+		help="(REQUIRED) issue/verify/revoke Token")
+	parser.add_argument("-r", "--url", 
+		help="Set API URL")
+	parser.add_argument("-c", "--clientid", 
+		help="Set Client ID (For Verify Token)")
+	parser.add_argument("-i", "--clientip", 
+		help="Set Client IP (For Verify Token)")
+	parser.add_argument("-u", "--username", 
+		help="Set Username")
+	parser.add_argument("-t", "--token", 
+		help="For Verify/Revoke, Set Token")
 	args = parser.parse_args()
 	if not args.action :
 		parser.print_help()
@@ -61,9 +71,14 @@ def parseArgs() :
 #issue token
 def issueToken() :
 	global verbose
-	USERNAME = env_overwrite.get('username', os.getenv('CG_USERNAME',''))
-	PASSWORD = env_overwrite.get('password', os.getenv('CG_PASSWORD',''))
-	URL = env_overwrite.get('url', os.getenv('CG_API_URL','https://sandbox.cigi.illinois.edu/home/rest/'))
+	USERNAME = env_overwrite.get('username', 
+		os.getenv('CG_USERNAME',''))
+	PASSWORD = env_overwrite.get('password', 
+		os.getenv('CG_PASSWORD',''))
+	URL = env_overwrite.get('url', 
+		os.getenv('CG_API_URL', 
+			'https://sandbox.cigi.illinois.edu/home/rest/')
+		)
 	#A sample issue token request JSON
 	request_json = {'username' : USERNAME,
 		'password' : PASSWORD,
@@ -77,8 +92,13 @@ def issueToken() :
 	#Make RESTful POST call to "token" resource
 	#Revoke would use DELETE, Verify would use PUT
 	try :
-		request_ret = requests.post(URL,data=request_json,timeout=50,verify=False);
-	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
+		request_ret = requests.post(URL,
+			data=request_json,
+			timeout=50,
+			verify=False)
+	except (requests.exceptions.ConnectionError,
+		requests.exceptions.HTTPError,
+		requests.exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
@@ -94,17 +114,27 @@ def issueToken() :
 		exit()
 	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Issue Token (HTTP POST)',request_json,response_json,URL)
+		printResponse('Issue Token (HTTP POST)',
+			request_json,
+			response_json,
+			URL)
 	return os.getenv('CG_TOKEN','')
 
 #verify token
 def verifyToken() :
 	global verbose
-	URL = env_overwrite.get('url', os.getenv('CG_API_URL','https://sandbox.cigi.illinois.edu/home/rest/'))
-	USERNAME = env_overwrite.get('username', os.getenv('CG_USERNAME',''))
-	CLIENT_ID = env_overwrite.get('clientid', os.getenv('CG_CLIENT_ID',''))
-	CLIENT_IP = env_overwrite.get('clientip', os.getenv('CG_CLIENT_IP',''))
-	TOKEN = env_overwrite.get('clientip',os.getenv('CG_TOKEN',''))
+	URL = env_overwrite.get('url', 
+		os.getenv('CG_API_URL',
+			'https://sandbox.cigi.illinois.edu/home/rest/')
+		)
+	USERNAME = env_overwrite.get('username', 
+		os.getenv('CG_USERNAME',''))
+	CLIENT_ID = env_overwrite.get('clientid', 
+		os.getenv('CG_CLIENT_ID',''))
+	CLIENT_IP = env_overwrite.get('clientip', 
+		os.getenv('CG_CLIENT_IP',''))
+	TOKEN = env_overwrite.get('clientip',
+		os.getenv('CG_TOKEN',''))
 	if not TOKEN :
 		sys.stderr.write('No valid CG_TOKEN given\n')
 		exit()
@@ -120,8 +150,14 @@ def verifyToken() :
 	#Set HTTP Header
 	headers = {'Content-Length' : request_length}
 	try :
-		request_ret = requests.put(URL,data=request_json,headers=headers,timeout=50,verify=False)
-	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
+		request_ret = requests.put(URL,
+			data=request_json,
+			headers=headers,
+			timeout=50,
+			verify=False)
+	except (requests.exceptions.ConnectionError,
+		requests.exceptions.HTTPError,
+		requests.exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
@@ -130,7 +166,10 @@ def verifyToken() :
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Verify Token \"%s\" (HTTP PUT)' %(TOKEN),request_json,response_json,URL)
+		printResponse('Verify Token \"%s\" (HTTP PUT)' %(TOKEN),
+			request_json,
+			response_json,
+			URL)
 	if response_json['status'] == 'success' :
 		return True
 	else :
@@ -139,10 +178,15 @@ def verifyToken() :
 # revoke token
 def revokeToken() :
 	global verbose
-	USERNAME = env_overwrite.get('username',os.getenv('CG_USERNAME',''))
-	PASSWORD = env_overwrite.get('password',os.getenv('CG_PASSWORD',''))
-	TOKEN = env_overwrite.get('token',os.getenv('CG_TOKEN',''))
-	URL = env_overwrite.get('url',os.getenv('CG_API_URL','https://sandbox.cigi.illinois.edu/home/rest/'))
+	USERNAME = env_overwrite.get('username',
+		os.getenv('CG_USERNAME',''))
+	PASSWORD = env_overwrite.get('password',
+		os.getenv('CG_PASSWORD',''))
+	TOKEN = env_overwrite.get('token',
+		os.getenv('CG_TOKEN',''))
+	URL = env_overwrite.get('url',
+		os.getenv('CG_API_URL',
+			'https://sandbox.cigi.illinois.edu/home/rest/'))
 	if not TOKEN :
 		sys.stderr.write('No valid CG_TOKEN given\n')
 		exit()
@@ -154,8 +198,13 @@ def revokeToken() :
 	resource = "token"
 	URL += resource
 	try :
-		request_ret = requests.delete(URL,params=request_json,timeout=50,verify=False)
-	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
+		request_ret = requests.delete(URL,
+			params=request_json,
+			timeout=50,
+			verify=False)
+	except (requests.exceptions.ConnectionError,
+		requests.exceptions.HTTPError,
+		requests.exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
@@ -164,7 +213,10 @@ def revokeToken() :
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Revoke Token \"%s\" (HTTP DELETE)' %TOKEN,request_json,response_json,URL)
+		printResponse('Revoke Token \"%s\" (HTTP DELETE)' %TOKEN,
+			request_json,
+			response_json,
+			URL)
 	# Token was revoked successfully, so store empty string as environ token
 	if response_json['status'] == 'success' :
 		os.environ['token'] = ''
