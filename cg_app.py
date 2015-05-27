@@ -2,6 +2,7 @@
 # as well as get info or configuration of applications registered
 # requires a valid token either in bash environment or given at command line
 
+from cg_print import *
 import json
 import requests
 import argparse
@@ -20,24 +21,7 @@ env_overwrite = {}
 
 verbose = False
 
-#prints information if -v or --verbose specified
-def printResponse(request_type, request_json, response_json) :
-	try :
-		status = response_json['status']
-	except KeyError :
-		sys.stderr.write("\nResponse JSON failed to create.\n")
-		exit()
-	if(status != 'success') :
-		sys.stderr.write(request_type + " Request Failed\n")
-		sys.stderr.write("Error %d: %s\n" %(response_json['result']['error_code'],response_json['result']['message']))
-		exit()
-	request_json['password'] = '*******'
-	print "\nURL: " + env_overwrite.get('url',os.getenv('CG_API_URL','No URL Given')) + "\n"
-	print "Request: " + request_type + "\n"
-	print "Request Data (in JSON format): " + json.dumps(request_json,indent=4,separators=(',', ': ')) + "\n"
-	print "Response (in JSON format): " + json.dumps(response_json,indent=4,separators=(',', ': ')) + "\n"
-
-#parses command line arguments (gives help if done incorrectly)
+# parses command line arguments (gives help if done incorrectly)
 def parseArgs() :
 	global verbose
 	parser = argparse.ArgumentParser()
@@ -56,11 +40,11 @@ def parseArgs() :
 	os.environ['CG_ACTION'] = args.action
 	if args.verbose :
 		verbose = True
-	#used for OpenService API calls (which make REST calls)
+	# used for OpenService API calls (which make REST calls)
 	for arg in vars(args) :
 		if getattr(args,arg) and arg is not 'verbose':
 			env_overwrite[arg] = getattr(args,arg)
-	#append a terminating '/' if non-existent in API URL
+	# append a terminating '/' if non-existent in API URL
 	if env_overwrite.get('url','') and not env_overwrite.get('url','').endswith('/') :
 		env_overwrite['url'] += '/'
 	elif os.getenv('CG_API_URL','') and not os.getenv('CG_API_URL','').endswith('/') :
@@ -110,8 +94,10 @@ def registerApp() :
 		exit()
 	# Get the response from the REST POST in JSON format
 	response_json = request_ret.json()
+	# Check for errors sent back in the response
+	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Register App \"%s\" (HTTP POST)' %APPNAME, request_json, response_json)
+		printResponse('Register App \"%s\" (HTTP POST)' %APPNAME, request_json, response_json,URL)
 	# on success, return the registered app's name
 	try :
 		return response_json['result']['app']
@@ -148,8 +134,9 @@ def getAppInfo(dest_filename) :
 		exit()
 	# Get the response from the REST GET in JSON format (will be written to dest file)
 	response_json = request_ret.json()
+	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Get app info for \"%s\" (HTTP GET)' %APPNAME, request_json, response_json)
+		printResponse('Get app info for \"%s\" (HTTP GET)' %APPNAME, request_json, response_json,URL)
 	# Dump the response JSON (the app info) into the destination file
 	with open(dest_filename, 'w') as outfile :
 		json.dump(response_json,outfile,indent=4,separators=(',', ': '))
@@ -194,8 +181,9 @@ def configApp(config_filename) :
 		exit()
 	# Get the response from the REST POST in JSON format
 	response_json = request_ret.json()
+	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Configure app  \"%s\" (HTTP POST)' %APPNAME, response_json)
+		printResponse('Configure app  \"%s\" (HTTP POST)' %APPNAME, request_json, response_json,URL)
 	# If correctly configured, return true
 	return True
 
@@ -228,8 +216,9 @@ def getAppConfig(dest_filename) :
 		exit()
 	# Get the response from the REST GET in JSON format (will be written to dest file)
 	response_json = request_ret.json()
+	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Get app config for \"%s\" (HTTP GET)' %APPNAME, request_json, response_json)
+		printResponse('Get app config for \"%s\" (HTTP GET)' %APPNAME, request_json, response_json,URL)
 	# Dump the response JSON (the app config) into the destination file
 	with open(dest_filename, 'w') as outfile :
 		json.dump(response_json,outfile,indent=4,separators=(',',': '))

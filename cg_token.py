@@ -1,6 +1,7 @@
 # Set of utilities to issue/verify/revoke a CG token with REST calls
 # requires a valid username and password either in bash environment or given at command line
 
+from cg_print import *
 import json
 import os, sys
 import argparse
@@ -20,23 +21,6 @@ env_overwrite = {}
 # global bool to know when the user wants information printed
 # activated with -v/--verbose
 verbose = False
-
-#prints information if -v or --verbose specified
-def printResponse(request_type, request_json, response_json) :
-	try :
-		status = response_json['status']
-	except KeyError :
-		sys.stderr.write("\nResponse JSON failed to create.\n")
-		exit()
-	if(status != 'success') :
-		sys.stderr.write(request_type + " Request Failed\n")
-		sys.stderr.write("Error %d: %s\n" %(response_json['result']['error_code'],response_json['result']['message']))
-		exit()
-	request_json['password'] = '*******'
-	print "\nURL: " + env_overwrite.get('url',os.getenv('CG_API_URL','No URL Given')) + "\n"
-	print "Request: " + request_type + "\n"
-	print "Request Data (in JSON format): " + json.dumps(request_json,indent=4,separators=(',', ': ')) + "\n"
-	print "Response (in JSON format): " + json.dumps(response_json,indent=4,separators=(',', ': ')) + "\n"
 
 #parses command line arguments (gives help if done incorrectly)
 def parseArgs() :
@@ -102,13 +86,15 @@ def issueToken() :
 		exit()
 	#Get the response from the REST POST in JSON format
 	response_json = request_ret.json()
+	check_for_response_errors(response_json)
 	try :
 		os.environ['CG_TOKEN'] = response_json['result']['token']
 	except (TypeError,KeyError) :
 		sys.stderr.write("Token creation failed. (Check your arguments)\n")
 		exit()
+	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Issue Token (HTTP POST)',request_json,response_json)
+		printResponse('Issue Token (HTTP POST)',request_json,response_json,URL)
 	return os.getenv('CG_TOKEN','')
 
 #verify token
@@ -142,8 +128,9 @@ def verifyToken() :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
 		exit()
 	response_json = request_ret.json()
+	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Verify Token \"%s\" (HTTP PUT)' %(TOKEN),request_json,response_json)
+		printResponse('Verify Token \"%s\" (HTTP PUT)' %(TOKEN),request_json,response_json,URL)
 	if response_json['status'] == 'success' :
 		return True
 	else :
@@ -175,8 +162,9 @@ def revokeToken() :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
 		exit()
 	response_json = request_ret.json()
+	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Revoke Token \"%s\" (HTTP DELETE)' %TOKEN,request_json,response_json)
+		printResponse('Revoke Token \"%s\" (HTTP DELETE)' %TOKEN,request_json,response_json,URL)
 	# Token was revoked successfully, so store empty string as environ token
 	if response_json['status'] == 'success' :
 		os.environ['token'] = ''
