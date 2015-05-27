@@ -63,7 +63,8 @@ def parseArgs() :
 	elif os.getenv('CG_API_URL','') and not os.getenv('CG_API_URL','').endswith('/') :
 		os.environ['CG_API_URL'] += '/'
 	elif not os.getenv('CG_API_URL','') :
-		sys.stderr.write('CG_API_URL (API URL for REST calls) not specified\n')
+		sys.stderr.write('CG_API_URL (API URL for REST calls)' 
+				'not specified\n')
 		exit()
 	return (parser,args)
 
@@ -100,7 +101,8 @@ def issueToken() :
 	except (requests.exceptions.ConnectionError,
 		requests.exceptions.HTTPError,
 		requests.exceptions.MissingSchema) :
-		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
+		sys.stderr.write('Problem with API URL - ' 
+				'Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
@@ -159,7 +161,8 @@ def verifyToken() :
 	except (requests.exceptions.ConnectionError,
 		requests.exceptions.HTTPError,
 		requests.exceptions.MissingSchema) :
-		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
+		sys.stderr.write('Problem with API URL - '
+				'Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
@@ -167,7 +170,7 @@ def verifyToken() :
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Verify Token \"%s\" (HTTP PUT)' %(TOKEN),
+		printResponse('Verify Token "%s" (HTTP PUT)' %(TOKEN),
 			request_json,
 			response_json,
 			URL)
@@ -207,7 +210,8 @@ def revokeToken() :
 	except (requests.exceptions.ConnectionError,
 		requests.exceptions.HTTPError,
 		requests.exceptions.MissingSchema) :
-		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
+		sys.stderr.write('Problem with API URL - '
+				'Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
@@ -215,7 +219,7 @@ def revokeToken() :
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Revoke Token \"%s\" (HTTP DELETE)' %TOKEN,
+		printResponse('Revoke Token %s (HTTP DELETE)' %TOKEN,
 			request_json,
 			response_json,
 			URL)

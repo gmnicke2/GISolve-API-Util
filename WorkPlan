@@ -24,6 +24,8 @@ Plan:
     retrieving job output
   There is also a "cg_version.py" where the user supplies API URL and the version is printed
 
+
+TODO: Use logs for debugging info
 __________________________
 Desired Example Use
 __________________________

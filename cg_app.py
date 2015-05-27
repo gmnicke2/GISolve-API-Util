@@ -38,9 +38,10 @@ def parseArgs() :
 	parser.add_argument("-t", "--token", 
 		help="Set Token")
 	parser.add_argument("-cf","--configfile", 
-		help="For action \'configure\' config file in JSON format")
+		help="For action 'configure' config file in JSON format")
 	parser.add_argument("-df","--destfile", 
-		help="For actions \'getinfo\' and \'getconfig\' destination file to write response")
+		help="For actions 'getinfo' and 'getconfig' "
+			"destination file to write response")
 	args = parser.parse_args()
 	if not args.action :
 		parser.print_help()
@@ -58,10 +59,12 @@ def parseArgs() :
 	elif os.getenv('CG_API_URL','') and not os.getenv('CG_API_URL','').endswith('/') :
 		os.environ['CG_API_URL'] += '/'
 	elif not os.getenv('CG_API_URL','') :
-		sys.stderr.write('CG_API_URL (API URL for REST calls) not specified\n')
+		sys.stderr.write('CG_API_URL (API URL for REST calls) '
+				'not specified\n')
 		exit()
 	if not env_overwrite.get('appname',os.getenv('CG_APP_NAME','')) :
-		sys.stderr.write('No CG_APP_NAME found or command line argument specified\n')
+		sys.stderr.write('No CG_APP_NAME found or '
+				'command line argument specified\n')
 		exit()
 	return (parser,args)
 
@@ -88,7 +91,8 @@ def registerApp() :
 		'app' : APPNAME,
 		'longname' : 'Test app by %s' % USERNAME,
 		'version' : 'V0.1',
-		'info' : '<h2>%s</h2><p>Description of App (%s) Goes Here</p><p>Author: %s</p>' % (APPNAME,APPNAME,USERNAME),
+		'info' : '<h2>%s</h2><p>Description of App (%s) '
+				'Goes Here</p><p>Author: %s</p>' % (APPNAME,APPNAME,USERNAME),
 		'author' : USERNAME,
 		'tags' : 'test, app, %s' % USERNAME
 	}
@@ -107,7 +111,8 @@ def registerApp() :
 	except (requests.exceptions.ConnectionError,
 		requests.exceptions.HTTPError,
 		requests.exceptions.MissingSchema) :
-		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
+		sys.stderr.write('Problem with API URL - '
+				'Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
@@ -161,7 +166,8 @@ def getAppInfo(dest_filename) :
 	except (requests.exceptions.ConnectionError,
 		requests.exceptions.HTTPError,
 		requests.exceptions.MissingSchema) :
-		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
+		sys.stderr.write('Problem with API URL - '
+				'Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
@@ -227,7 +233,8 @@ def configApp(config_filename) :
 	except (requests.exceptions.ConnectionError,
 		requests.exceptions.HTTPError,
 		requests.exceptions.MissingSchema) :
-		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
+		sys.stderr.write('Problem with API URL - '
+				'Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
@@ -277,7 +284,8 @@ def getAppConfig(dest_filename) :
 	except (requests.exceptions.ConnectionError,
 		requests.exceptions.HTTPError,
 		requests.exceptions.MissingSchema) :
-		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
+		sys.stderr.write('Problem with API URL - '
+				'Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
