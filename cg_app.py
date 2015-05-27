@@ -8,6 +8,9 @@ import argparse
 import requests
 import os, sys
 
+# Used to disable InsecureRequestWarning that occurs with this API
+requests.packages.urllib3.disable_warnings()
+
 # any argument used to overwrite environ vars is stored here;
 # it is accessed throughout the code with the format:
 # env_overwrite.get(<KEY>,<If KEY doesn't exist use environ or its default -- usually ''>)

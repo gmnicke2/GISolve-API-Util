@@ -7,6 +7,9 @@ import argparse
 import requests
 import getpass
 
+# Used to disable InsecureRequestWarning that occurs with this API
+requests.packages.urllib3.disable_warnings()
+
 # any argument used to overwrite environ vars is stored here;
 # it is accessed throughout the code with the format:
 # env_overwrite.get(<KEY>,<If KEY doesn't exist use environ or its default -- usually ''>)
@@ -122,13 +125,13 @@ def verifyToken() :
 		'consumer' : CLIENT_ID,
 		'remote_addr' : CLIENT_IP,
 		'token' : TOKEN,
-		'username' : USERNAME,
-		'authrequest' : 'default'
+		'username' : USERNAME
 	}
 	resource = "token"
 	URL += resource
+	request_length = str(len(json.dumps(request_json)))
 	#Set HTTP Header
-	headers = {'Content-Length' : str(len(json.dumps(request_json)))}
+	headers = {'Content-Length' : request_length}
 	try :
 		request_ret = requests.put(URL,params=request_json,headers=headers,timeout=50,verify=False)
 	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
@@ -140,7 +143,7 @@ def verifyToken() :
 	response_json = request_ret.json()
 	if(verbose) :
 		printResponse('Verify Token \"%s\" (HTTP PUT)' %(TOKEN),request_json,response_json)
-	if request_json['status'] == 'success' :
+	if response_json['status'] == 'success' :
 		return True
 	else :
 		return False
