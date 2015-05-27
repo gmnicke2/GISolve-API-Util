@@ -49,7 +49,7 @@ def parseArgs() :
 		verbose = True
 	#used for OpenService API calls (which make REST calls)
 	for arg in vars(args) :
-		if getattr(args,arg) and (arg != 'verbose'):
+		if getattr(args,arg) and arg is not 'verbose':
 			env_overwrite[arg] = getattr(args,arg)
 	#append a terminating '/' if non-existent in API URL
 	if env_overwrite.get('url','') and not env_overwrite.get('url','').endswith('/') :
@@ -186,7 +186,7 @@ def configApp(config_filename) :
 	# Get the response from the REST POST in JSON format
 	response_json = request_ret.json()
 	if(verbose) :
-		printResponse('Configure app  \"%s\" (HTTP POST)' %os.environ.get('appname'), request_json, response_json)
+		printResponse('Configure app  \"%s\" (HTTP POST)' %APPNAME, response_json)
 	# If correctly configured, return true
 	return True
 
@@ -230,9 +230,7 @@ def getAppConfig(dest_filename) :
 	return True
 
 def main() :
-	parser_info = parseArgs()
-	parser = parser_info[0]
-	args = parser_info[1]
+	(parser,args) = parseArgs()
 	action = os.getenv('CG_ACTION','None').lower()
 	if action == 'register' :
 		print registerApp()
@@ -241,7 +239,8 @@ def main() :
 		if args.configfile and os.path.exists(args.configfile) :
 			configApp(args.configfile)
 		else :
-			print 'Config File Doesn\'t Exist'
+			sys.stderr.write('Config File Doesn\'t Exist\n')
+			exit()
 	elif action == 'getinfo' :
 		# check if destination file was specified in command-line arguments
 		if args.destfile :

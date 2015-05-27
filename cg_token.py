@@ -171,10 +171,8 @@ def revokeToken() :
 		return False
 
 def main() :
-	parser_info = parseArgs()
-	parser = parser_info[0]
-	args = parser_info[1]
-	action = os.environ.get('CG_ACTION','None').lower()
+	(parser,args) = parseArgs()
+	action = os.getenv('CG_ACTION','None').lower()
 	if action == "issue" :
 		print issueToken()
 	else :
