@@ -30,6 +30,7 @@ def printResponse(request_type, request_json, response_json) :
 		exit()
 	if(status != 'success') :
 		sys.stderr.write(request_type + " Request Failed\n")
+		sys.stderr.write("Error %d: %s\n" %(response_json['result']['error_code'],response_json['result']['message']))
 		exit()
 	request_json['password'] = '*******'
 	print "\nURL: " + env_overwrite.get('url',os.getenv('CG_API_URL','No URL Given')) + "\n"
@@ -133,7 +134,7 @@ def verifyToken() :
 	#Set HTTP Header
 	headers = {'Content-Length' : request_length}
 	try :
-		request_ret = requests.put(URL,params=request_json,headers=headers,timeout=50,verify=False)
+		request_ret = requests.put(URL,data=request_json,headers=headers,timeout=50,verify=False)
 	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
 		exit()

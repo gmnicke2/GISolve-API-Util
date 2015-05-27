@@ -29,6 +29,7 @@ def printResponse(request_type, request_json, response_json) :
 		exit()
 	if(status != 'success') :
 		sys.stderr.write(request_type + " Request Failed\n")
+		sys.stderr.write("Error %d: %s\n" %(response_json['result']['error_code'],response_json['result']['message']))
 		exit()
 	request_json['password'] = '*******'
 	print "\nURL: " + env_overwrite.get('url',os.getenv('CG_API_URL','No URL Given')) + "\n"
