@@ -8,7 +8,7 @@ Plan:
   Uses requests library instead of pycURL
   Imported libraries : 
     os (for environmental variables), sys(for stderr writing), json (for requests/responses), argparse, requests (for REST calls), getpass (if user wants to specify a password)
-  3 Main Files (gisolve_token.py, gisolve_app.py, gisolve_job.py) :
+  3 Main Files (cg_token.py, cg_app.py, cg_job.py) :
     executed with either command line arguments to fill [API URL, App Name, Client ID, Client IP, Username, (Optional) Password], as well as additional arguments depending on file
         OR TAKEN IN FROM BASH ENVIRONMENTAL VARIABLES
     All arguments drawn from bash env variables unless otherwise supplied
@@ -22,7 +22,7 @@ Plan:
     retrieving app info/config,
     launching/monitoring a job,
     retrieving job output
-  There is also a "gisolve_version.py" where the user supplies API URL and the version is printed
+  There is also a "cg_version.py" where the user supplies API URL and the version is printed
 
 __________________________
 Desired Example Use
@@ -58,10 +58,10 @@ export CG_API_URL="https://sandbox.cigi.illinois.edu/home/rest/"
 export CG_APP_NAME="[app name]"
 
 App Register:
-python cg_app.py -act register --name=[app to register]
+python cg_app.py -act register --appname=[app to register]
 
 ALTERNATIVELY:
-export CG_APP_NAME=`python cg_app.py -act register --name=[app to register]`
+export CG_APP_NAME=`python cg_app.py -act register appname=[app to register]`
 (This registers an app and saves its name to bash env in one line)
 
 App Configure:
