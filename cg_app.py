@@ -91,7 +91,14 @@ def registerApp() :
 	# App register is a POST RESTful call
 	# App configure is also a POST call
 	# Get app information/configuration are GET calls
-	request_ret = requests.post(URL,data=request_json,timeout=50,verify=False)
+	try:
+		request_ret = requests.post(URL,data=request_json,timeout=50,verify=False)
+	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
+		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
+		exit()
+	except (requests.exceptions.Timeout) :
+		sys.stderr.write('Request timed out.\nTerminating.\n')
+		exit()
 	# Get the response from the REST POST in JSON format
 	response_json = request_ret.json()
 	if(verbose) :
@@ -122,7 +129,14 @@ def getAppInfo(dest_filename) :
 	# append resource (app) to API URL
 	URL += "app"
 	# Make a GET RESTful call
-	request_ret = requests.get(URL, params=request_json,timeout=50,verify=False)
+	try :
+		request_ret = requests.get(URL, params=request_json,timeout=50,verify=False)
+	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
+		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
+		exit()
+	except (requests.exceptions.Timeout) :
+		sys.stderr.write('Request timed out.\nTerminating.\n')
+		exit()
 	# Get the response from the REST GET in JSON format (will be written to dest file)
 	response_json = request_ret.json()
 	if(verbose) :
@@ -161,7 +175,14 @@ def configApp(config_filename) :
 	# append resource (appconfig) to API URL
 	URL += "appconfig"
 	# Make RESTful POST call
-	request_ret = requests.post(URL,data=request_json,timeout=50,verify=False)
+	try : 
+		request_ret = requests.post(URL,data=request_json,timeout=50,verify=False)
+	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
+		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
+		exit()
+	except (requests.exceptions.Timeout) :
+		sys.stderr.write('Request timed out.\nTerminating.\n')
+		exit()
 	# Get the response from the REST POST in JSON format
 	response_json = request_ret.json()
 	if(verbose) :
@@ -188,7 +209,14 @@ def getAppConfig(dest_filename) :
 	# append resource (appconfig) to API URL
 	URL += "appconfig"
 	# Make a GET RESTful call
-	request_ret = requests.get(URL, params=request_json,timeout=50, verify=False)
+	try :
+		request_ret = requests.get(URL, params=request_json,timeout=50, verify=False)
+	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
+		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
+		exit()
+	except (requests.exceptions.Timeout) :
+		sys.stderr.write('Request timed out.\nTerminating.\n')
+		exit()
 	# Get the response from the REST GET in JSON format (will be written to dest file)
 	response_json = request_ret.json()
 	if(verbose) :
