@@ -6,6 +6,7 @@ from cg_extras import *
 import json
 import argparse
 import requests
+from requests import exceptions
 import os, sys
 
 # Used to disable InsecureRequestWarning that occurs with this API
@@ -18,11 +19,9 @@ requests.packages.urllib3.disable_warnings()
 # evaluate to False for error handling as well as keep the code succinct
 env_overwrite = {}
 
-verbose = False
-
 # parses command line arguments (gives help if done incorrectly)
 def parseArgs() :
-	global verbose
+	verbose = False
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-v", "--verbose",
 		action="store_true", 
@@ -66,26 +65,12 @@ def parseArgs() :
 		sys.stderr.write('No CG_APP_NAME found or '
 				'command line argument specified\n')
 		exit()
-	return (parser,args)
+	return (parser,args,verbose)
 
 ############################API CALLS##################################
 # Register an app, must have a valid token
-def registerApp() :
+def registerApp(USERNAME,APPNAME,URL,TOKEN,verbose) :
 	# Set up request JSON
-	global verbose
-	USERNAME = env_overwrite.get('username',
-		os.getenv('CG_USERNAME',''))
-	TOKEN = env_overwrite.get('token',
-		os.getenv('CG_TOKEN',''))
-	APPNAME = env_overwrite.get('appname', 
-		os.getenv('CG_APP_NAME',''))
-	URL = env_overwrite.get('url',
-		os.getenv('CG_API_URL',
-			'https://sandbox.cigi.illinois.edu/home/rest/')
-		)
-	if not TOKEN :
-		sys.stderr.write('No valid CG_TOKEN given\n')
-		exit()
 	request_json = {
 		'token' : TOKEN,
 		'app' : APPNAME,
@@ -108,13 +93,13 @@ def registerApp() :
 			data=request_json,
 			timeout=50,
 			verify=False)
-	except (requests.exceptions.ConnectionError,
-		requests.exceptions.HTTPError,
-		requests.exceptions.MissingSchema) :
+	except (exceptions.ConnectionError,
+		exceptions.HTTPError,
+		exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - '
 				'Is it entered correctly?\nTerminating.\n')
 		exit()
-	except (requests.exceptions.Timeout) :
+	except (exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
 		exit()
 	# Get the response from the REST POST in JSON format
@@ -135,19 +120,7 @@ def registerApp() :
 		return None
 
 # get app info and write it in JSON format to the destfile given as argument
-def getAppInfo(dest_filename) :
-	global verbose
-	TOKEN = env_overwrite.get('token',
-		os.getenv('CG_TOKEN',''))
-	APPNAME = env_overwrite.get('appname', 
-		os.getenv('CG_APP_NAME',''))
-	URL = env_overwrite.get('url',
-		os.getenv('CG_API_URL',
-			'https://sandbox.cigi.illinois.edu/home/rest/')
-		)
-	if not TOKEN :
-		sys.stderr.write('No valid CG_TOKEN given\n')
-		exit()
+def getAppInfo(USERNAME,APPNAME,URL,TOKEN,dest_filename,verbose) :
 	if(verbose) :
 		print "\nWriting info to \"" + dest_filename + "\""
 	request_json = {
@@ -163,13 +136,13 @@ def getAppInfo(dest_filename) :
 			params=request_json,
 			timeout=50,
 			verify=False)
-	except (requests.exceptions.ConnectionError,
-		requests.exceptions.HTTPError,
-		requests.exceptions.MissingSchema) :
+	except (exceptions.ConnectionError,
+		exceptions.HTTPError,
+		exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - '
 				'Is it entered correctly?\nTerminating.\n')
 		exit()
-	except (requests.exceptions.Timeout) :
+	except (exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
 		exit()
 	# Get the response from the REST GET in JSON format (will be written to dest file)
@@ -193,21 +166,7 @@ def getAppInfo(dest_filename) :
 	return True
 
 # configure app with config JSON read in from a file
-def configApp(config_filename) :
-	global verbose
-	USERNAME = env_overwrite.get('username',
-		os.getenv('CG_USERNAME',''))
-	TOKEN = env_overwrite.get('token',
-		os.getenv('CG_TOKEN',''))
-	APPNAME = env_overwrite.get('appname', 
-		os.getenv('CG_APP_NAME',''))
-	URL = env_overwrite.get('url',
-		os.getenv('CG_API_URL',
-			'https://sandbox.cigi.illinois.edu/home/rest/')
-		)
-	if not TOKEN :
-		sys.stderr.write('No valid CG_TOKEN given\n')
-		exit()
+def configApp(USERNAME,APPNAME,URL,TOKEN,config_filename,verbose) :
 	if(verbose) :
 		print "\nConfig File: \"" + config_filename + "\""
 	f = open(config_filename)
@@ -230,13 +189,13 @@ def configApp(config_filename) :
 			data=request_json,
 			timeout=50,
 			verify=False)
-	except (requests.exceptions.ConnectionError,
-		requests.exceptions.HTTPError,
-		requests.exceptions.MissingSchema) :
+	except (exceptions.ConnectionError,
+		exceptions.HTTPError,
+		exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - '
 				'Is it entered correctly?\nTerminating.\n')
 		exit()
-	except (requests.exceptions.Timeout) :
+	except (exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
 		exit()
 	# Get the response from the REST POST in JSON format
@@ -251,21 +210,7 @@ def configApp(config_filename) :
 	return True
 
 # get app config and write it in JSON format to the destfile given as an argument
-def getAppConfig(dest_filename) :
-	global verbose
-	USERNAME = env_overwrite.get('username',
-		os.getenv('CG_USERNAME',''))
-	TOKEN = env_overwrite.get('token',
-		os.getenv('CG_TOKEN',''))
-	APPNAME = env_overwrite.get('appname', 
-		os.getenv('CG_APP_NAME',''))
-	URL = env_overwrite.get('url',
-		os.getenv('CG_API_URL',
-			'https://sandbox.cigi.illinois.edu/home/rest/')
-		)
-	if not TOKEN :
-		sys.stderr.write('No valid CG_TOKEN given\n')
-		exit()
+def getAppConfig(USERNAME,APPNAME,URL,TOKEN,dest_filename,verbose) :
 	if(verbose) :
 		print '\nWriting config to \"' + dest_filename + '\"'
 	request_json = {
@@ -281,13 +226,13 @@ def getAppConfig(dest_filename) :
 			params=request_json,
 			timeout=50, 
 			verify=False)
-	except (requests.exceptions.ConnectionError,
-		requests.exceptions.HTTPError,
-		requests.exceptions.MissingSchema) :
+	except (exceptions.ConnectionError,
+		exceptions.HTTPError,
+		exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - '
 				'Is it entered correctly?\nTerminating.\n')
 		exit()
-	except (requests.exceptions.Timeout) :
+	except (exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
 		exit()
 	# Get the response from the REST GET in JSON format (will be written to dest file)
@@ -311,32 +256,76 @@ def getAppConfig(dest_filename) :
 	return True
 
 def main() :
-	(parser,args) = parseArgs()
+	(parser,args,verbose) = parseArgs()
+	# Acquire required information (either from env or overwritten while parsing)
 	action = os.getenv('CG_ACTION','None').lower()
+	USERNAME = env_overwrite.get('username',
+		os.getenv('CG_USERNAME',''))
+	APPNAME = env_overwrite.get('appname', 
+		os.getenv('CG_APP_NAME',''))
+	URL = env_overwrite.get('url',
+		os.getenv('CG_API_URL',
+			'https://sandbox.cigi.illinois.edu/home/rest/')
+		)
+	TOKEN = env_overwrite.get('token',
+		os.getenv('CG_TOKEN',''))
+	if not TOKEN :
+		sys.stderr.write('No valid CG_TOKEN given\n')
+		exit()
+	# Make appropriate call or print help if action is not valid
 	if action == 'register' :
-		print registerApp()
+		print registerApp(USERNAME,
+			APPNAME,
+			URL,
+			TOKEN,
+			verbose)
 	elif action == 'configure' :
 		# check if config file was given or if it's invalid
 		if args.configfile and os.path.exists(args.configfile) :
-			configApp(args.configfile)
+			configApp(USERNAME,
+				APPNAME,
+				URL,
+				TOKEN,
+				args.configfile,
+				verbose)
 		else :
 			sys.stderr.write('Config File Doesn\'t Exist\n')
 			exit()
 	elif action == 'getinfo' :
 		# check if destination file was specified in command-line arguments
 		if args.destfile :
-			getAppInfo(args.destfile)
+			getAppInfo(USERNAME,
+				APPNAME,
+				URL,
+				TOKEN,
+				args.destfile,
+				verbose)
 		elif not os.path.exists("getinfo_out.json") : # use this path as default
-			getAppInfo("getinfo_out.json")
+			getAppInfo(USERNAME,
+				APPNAME,
+				URL,
+				TOKEN,
+				"getinfo_out.json",
+				verbose)
 		else : # if default path exists, don't overwrite it, just print help & exit
 			parser.print_help()
 			exit()
 	elif action == 'getconfig' :
 		# check if destination file was specified in command-line arguments
 		if args.destfile :
-			getAppConfig(args.destfile)
+			getAppConfig(USERNAME,
+				APPNAME,
+				URL,
+				TOKEN,
+				args.destfile,
+				verbose)
 		elif not os.path.exists("getconfig_out.json") : # use this path as default
-			getAppConfig("getconfig_out.json")
+			getAppConfig(USERNAME,
+				APPNAME,
+				URL,
+				TOKEN,
+				"getconfig_out.json",
+				verbose)
 		else : # if default path exists, don't overwrite it, just print help & exit
 			parser.print_help()
 			exit()

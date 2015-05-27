@@ -6,6 +6,7 @@ import json
 import os, sys
 import argparse
 import requests
+from requests import exceptions
 import getpass
 
 # Used to disable InsecureRequestWarning that occurs with this API
@@ -18,13 +19,9 @@ requests.packages.urllib3.disable_warnings()
 # evaluate to False for error handling as well as keep the code succinct
 env_overwrite = {}
 
-# global bool to know when the user wants information printed
-# activated with -v/--verbose
-verbose = False
-
 #parses command line arguments (gives help if done incorrectly)
 def parseArgs() :
-	global verbose
+	verbose = False
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-v", "--verbose",
 		action="store_true", 
@@ -66,20 +63,11 @@ def parseArgs() :
 		sys.stderr.write('CG_API_URL (API URL for REST calls)' 
 				'not specified\n')
 		exit()
-	return (parser,args)
+	return (parser,args,verbose)
 
 ############################API CALLS##################################
 #issue token
-def issueToken() :
-	global verbose
-	USERNAME = env_overwrite.get('username', 
-		os.getenv('CG_USERNAME',''))
-	PASSWORD = env_overwrite.get('password', 
-		os.getenv('CG_PASSWORD',''))
-	URL = env_overwrite.get('url', 
-		os.getenv('CG_API_URL', 
-			'https://sandbox.cigi.illinois.edu/home/rest/')
-		)
+def issueToken(USERNAME,PASSWORD,URL,verbose) :
 	#A sample issue token request JSON
 	request_json = {'username' : USERNAME,
 		'password' : PASSWORD,
@@ -98,13 +86,13 @@ def issueToken() :
 			data=request_json,
 			timeout=50,
 			verify=False)
-	except (requests.exceptions.ConnectionError,
-		requests.exceptions.HTTPError,
-		requests.exceptions.MissingSchema) :
+	except (exceptions.ConnectionError, 
+		exceptions.HTTPError, 
+		exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - ' 
 				'Is it entered correctly?\nTerminating.\n')
 		exit()
-	except (requests.exceptions.Timeout) :
+	except (exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
 		exit()
 	#Get the response from the REST POST in JSON format
@@ -123,23 +111,7 @@ def issueToken() :
 	return os.getenv('CG_TOKEN','')
 
 #verify token
-def verifyToken() :
-	global verbose
-	URL = env_overwrite.get('url', 
-		os.getenv('CG_API_URL',
-			'https://sandbox.cigi.illinois.edu/home/rest/')
-		)
-	USERNAME = env_overwrite.get('username', 
-		os.getenv('CG_USERNAME',''))
-	CLIENT_ID = env_overwrite.get('clientid', 
-		os.getenv('CG_CLIENT_ID',''))
-	CLIENT_IP = env_overwrite.get('clientip', 
-		os.getenv('CG_CLIENT_IP',''))
-	TOKEN = env_overwrite.get('clientip',
-		os.getenv('CG_TOKEN',''))
-	if not TOKEN :
-		sys.stderr.write('No valid CG_TOKEN given\n')
-		exit()
+def verifyToken(USERNAME,PASSWORD,URL,CLIENT_ID,CLIENT_IP,TOKEN,verbose) :
 	request_json = {
 		'consumer' : CLIENT_ID,
 		'remote_addr' : CLIENT_IP,
@@ -158,13 +130,13 @@ def verifyToken() :
 			headers=headers,
 			timeout=50,
 			verify=False)
-	except (requests.exceptions.ConnectionError,
-		requests.exceptions.HTTPError,
-		requests.exceptions.MissingSchema) :
+	except (exceptions.ConnectionError,
+		exceptions.HTTPError,
+		exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - '
 				'Is it entered correctly?\nTerminating.\n')
 		exit()
-	except (requests.exceptions.Timeout) :
+	except (exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
 		exit()
 	response_json = request_ret.json()
@@ -180,20 +152,7 @@ def verifyToken() :
 		return False
 
 # revoke token
-def revokeToken() :
-	global verbose
-	USERNAME = env_overwrite.get('username',
-		os.getenv('CG_USERNAME',''))
-	PASSWORD = env_overwrite.get('password',
-		os.getenv('CG_PASSWORD',''))
-	TOKEN = env_overwrite.get('token',
-		os.getenv('CG_TOKEN',''))
-	URL = env_overwrite.get('url',
-		os.getenv('CG_API_URL',
-			'https://sandbox.cigi.illinois.edu/home/rest/'))
-	if not TOKEN :
-		sys.stderr.write('No valid CG_TOKEN given\n')
-		exit()
+def revokeToken(USERNAME,PASSWORD,URL,TOKEN,verbose) :	
 	request_json = {
 		'username' : USERNAME,
     		'password' : PASSWORD,
@@ -207,13 +166,13 @@ def revokeToken() :
 			params=request_json,
 			timeout=50,
 			verify=False)
-	except (requests.exceptions.ConnectionError,
-		requests.exceptions.HTTPError,
-		requests.exceptions.MissingSchema) :
+	except (exceptions.ConnectionError,
+		exceptions.HTTPError,
+		exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - '
 				'Is it entered correctly?\nTerminating.\n')
 		exit()
-	except (requests.exceptions.Timeout) :
+	except (exceptions.Timeout) :
 		sys.stderr.write('Request timed out.\nTerminating.\n')
 		exit()
 	response_json = request_ret.json()
@@ -231,15 +190,47 @@ def revokeToken() :
 		return False
 
 def main() :
-	(parser,args) = parseArgs()
+	(parser,args,verbose) = parseArgs()
+	# Retrieve necessary info (either from env or overwritten while parsing)
 	action = os.getenv('CG_ACTION','None').lower()
+	USERNAME = env_overwrite.get('username', 
+		os.getenv('CG_USERNAME',''))
+	PASSWORD = env_overwrite.get('password', 
+		os.getenv('CG_PASSWORD',''))
+	URL = env_overwrite.get('url', 
+		os.getenv('CG_API_URL', 
+			'https://sandbox.cigi.illinois.edu/home/rest/')
+		)
+	# Make appropriate call or print help if action is not valid
 	if action == "issue" :
-		print issueToken()
+		print issueToken(USERNAME,
+			PASSWORD,
+			URL,
+			verbose)
 	else :
+		TOKEN = env_overwrite.get('token',
+			os.getenv('CG_TOKEN',''))
+		if not TOKEN :
+			sys.stderr.write('No valid CG_TOKEN given\n')
+			exit()
 		if action == "verify" :
-			verifyToken()
+			CLIENT_ID = env_overwrite.get('clientid', 
+				os.getenv('CG_CLIENT_ID',''))
+			CLIENT_IP = env_overwrite.get('clientip', 
+				os.getenv('CG_CLIENT_IP',''))
+			verifyToken(USERNAME,
+				PASSWORD,
+				URL,
+				CLIENT_ID,
+				CLIENT_IP,
+				TOKEN,
+				verbose)
 		elif action == "revoke" :
-			revokeToken()
+			revokeToken(USERNAME,
+				PASSWORD,
+				URL,
+				TOKEN,
+				verbose)
 		else :
 			parser.print_help()
 			exit()
