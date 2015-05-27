@@ -1,7 +1,7 @@
 # Set of utilities to issue/verify/revoke a CG token with REST calls
 # requires a valid username and password either in bash environment or given at command line
 
-from cg_print import *
+from cg_extras import *
 import json
 import os, sys
 import argparse
@@ -89,6 +89,7 @@ def issueToken() :
 	resource = "token"
 	#Append resource ("token") to URL
 	URL += resource
+	check_url_validity(URL)
 	#Make RESTful POST call to "token" resource
 	#Revoke would use DELETE, Verify would use PUT
 	try :
@@ -112,7 +113,6 @@ def issueToken() :
 	except (TypeError,KeyError) :
 		sys.stderr.write("Token creation failed. (Check your arguments)\n")
 		exit()
-	check_for_response_errors(response_json)
 	if(verbose) :
 		printResponse('Issue Token (HTTP POST)',
 			request_json,
@@ -146,6 +146,7 @@ def verifyToken() :
 	}
 	resource = "token"
 	URL += resource
+	check_url_validity(URL)
 	request_length = str(len(json.dumps(request_json)))
 	#Set HTTP Header
 	headers = {'Content-Length' : request_length}
@@ -197,6 +198,7 @@ def revokeToken() :
 	}
 	resource = "token"
 	URL += resource
+	check_url_validity(URL)
 	try :
 		request_ret = requests.delete(URL,
 			params=request_json,

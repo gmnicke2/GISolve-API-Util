@@ -2,9 +2,8 @@
 # as well as get info or configuration of applications registered
 # requires a valid token either in bash environment or given at command line
 
-from cg_print import *
+from cg_extras import *
 import json
-import requests
 import argparse
 import requests
 import os, sys
@@ -96,6 +95,7 @@ def registerApp() :
 	# Append resource (app) to API URL
 	resource = "app"
 	URL += resource
+	check_url_validity(URL)
 	# App register is a POST RESTful call
 	# App configure is also a POST call
 	# Get app information/configuration are GET calls
@@ -151,6 +151,7 @@ def getAppInfo(dest_filename) :
 	}
 	# append resource (app) to API URL
 	URL += "app"
+	check_url_validity(URL)
 	# Make a GET RESTful call
 	try :
 		request_ret = requests.get(URL, 
@@ -216,6 +217,7 @@ def configApp(config_filename) :
 	}
 	# append resource (appconfig) to API URL
 	URL += "appconfig"
+	check_url_validity(URL)
 	# Make RESTful POST call
 	try : 
 		request_ret = requests.post(URL,
@@ -265,6 +267,7 @@ def getAppConfig(dest_filename) :
 	}
 	# append resource (appconfig) to API URL
 	URL += "appconfig"
+	check_url_validity(URL)
 	# Make a GET RESTful call
 	try :
 		request_ret = requests.get(URL, 
