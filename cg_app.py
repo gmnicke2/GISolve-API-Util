@@ -1,4 +1,4 @@
-# Set of utilities to register/configure an application with REST calls
+# Set of utilities to register/configure a CG application with REST calls
 # as well as get info or configuration of applications registered
 # requires a valid token either in bash environment or given at command line
 
@@ -8,6 +8,11 @@ import argparse
 import requests
 import os, sys
 
+# any argument used to overwrite environ vars is stored here;
+# it is accessed throughout the code with the format:
+# env_overwrite.get(<KEY>,<If KEY doesn't exist use environ or its default -- usually ''>)
+# this allows for keys that don't exist / have no entries to always
+# evaluate to False for error handling as well as keep the code succinct
 env_overwrite = {}
 
 verbose = False
@@ -33,10 +38,10 @@ def parseArgs() :
 	global verbose
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-v", "--verbose",action="store_true", help="Print results/errors to stdout")
+	parser.add_argument("-act", "--action", help="(REQUIRED) register/configure/getinfo/getconfig")
+	parser.add_argument("-a", "--appname", help="Set App Name")
 	parser.add_argument("-r", "--url", help="Set API URL")
 	parser.add_argument("-u", "--username", help="Set Username")
-	parser.add_argument("-a", "--appname", help="Set App Name")
-	parser.add_argument("-act", "--action", help="(REQUIRED) register/configure/getinfo/getconfig")
 	parser.add_argument("-t", "--token", help="Set Token")
 	parser.add_argument("-cf","--configfile", help="For action \'configure\' config file in JSON format")
 	parser.add_argument("-df","--destfile", help="For actions \'getinfo\' and \'getconfig\' destination file to write response")

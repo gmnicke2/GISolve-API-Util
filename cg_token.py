@@ -1,11 +1,21 @@
+# Set of utilities to issue/verify/revoke a CG token with REST calls
+# requires a valid username and password either in bash environment or given at command line
+
 import json
 import os, sys
 import argparse
 import requests
 import getpass
 
+# any argument used to overwrite environ vars is stored here;
+# it is accessed throughout the code with the format:
+# env_overwrite.get(<KEY>,<If KEY doesn't exist use environ or its default -- usually ''>)
+# this allows for keys that don't exist / have no entries to always
+# evaluate to False for error handling as well as keep the code succinct
 env_overwrite = {}
 
+# global bool to know when the user wants information printed
+# activated with -v/--verbose
 verbose = False
 
 #prints information if -v or --verbose specified
@@ -29,12 +39,12 @@ def parseArgs() :
 	global verbose
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-v", "--verbose",action="store_true", help="Print results/errors to stdout")
+	parser.add_argument("-p", "--password", help="Choose to enter different Password",action="store_true")
+	parser.add_argument("-act", "--action", help="(REQUIRED) issue/verify/revoke Token")
 	parser.add_argument("-r", "--url", help="Set API URL")
 	parser.add_argument("-c", "--clientid", help="Set Client ID (For Verify Token)")
 	parser.add_argument("-i", "--clientip", help="Set Client IP (For Verify Token)")
 	parser.add_argument("-u", "--username", help="Set Username")
-	parser.add_argument("-p", "--password", help="Choose to enter different Password",action="store_true")
-	parser.add_argument("-act", "--action", help="(REQUIRED) issue/verify/revoke Token")
 	parser.add_argument("-t", "--token", help="For Verify/Revoke, Set Token")
 	args = parser.parse_args()
 	if not args.action :

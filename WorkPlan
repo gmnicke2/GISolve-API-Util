@@ -78,10 +78,10 @@ export CG_APP_NAME="[app name]" (could already exist if app registered this sess
 export CG_JOB_NAME="[job name]"
 
 Job Launch :
-python cg_job.py -act launch --name="[job name to launch]" (TODO: flags for job config)
+python cg_job.py -act launch --jobname="[job name to launch]" (TODO: flags for job config)
 
 ALTERNATIVELY:
-export CG_JOB_ID=`python cg_job.py -act launch --name=[job name to register]`
+export CG_JOB_ID=`python cg_job.py -act launch --jobname=[job name to register]`
 (This launches a job and saves its id to bash env in one line)
 
 TODO: last 2 job funcs
