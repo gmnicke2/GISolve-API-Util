@@ -25,14 +25,23 @@ verbose = False
 def parseArgs() :
 	global verbose
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-v", "--verbose",action="store_true", help="Print results/errors to stdout")
-	parser.add_argument("-act", "--action", help="(REQUIRED) register/configure/getinfo/getconfig")
-	parser.add_argument("-a", "--appname", help="Set App Name")
-	parser.add_argument("-r", "--url", help="Set API URL")
-	parser.add_argument("-u", "--username", help="Set Username")
-	parser.add_argument("-t", "--token", help="Set Token")
-	parser.add_argument("-cf","--configfile", help="For action \'configure\' config file in JSON format")
-	parser.add_argument("-df","--destfile", help="For actions \'getinfo\' and \'getconfig\' destination file to write response")
+	parser.add_argument("-v", "--verbose",
+		action="store_true", 
+		help="Print results/errors to stdout")
+	parser.add_argument("-act", "--action", 
+		help="(REQUIRED) register/configure/getinfo/getconfig")
+	parser.add_argument("-a", "--appname", 
+		help="Set App Name")
+	parser.add_argument("-r", "--url", 
+		help="Set API URL")
+	parser.add_argument("-u", "--username", 
+		help="Set Username")
+	parser.add_argument("-t", "--token", 
+		help="Set Token")
+	parser.add_argument("-cf","--configfile", 
+		help="For action \'configure\' config file in JSON format")
+	parser.add_argument("-df","--destfile", 
+		help="For actions \'getinfo\' and \'getconfig\' destination file to write response")
 	args = parser.parse_args()
 	if not args.action :
 		parser.print_help()
@@ -62,10 +71,16 @@ def parseArgs() :
 def registerApp() :
 	# Set up request JSON
 	global verbose
-	USERNAME = env_overwrite.get('username',os.getenv('CG_USERNAME',''))
-	TOKEN = env_overwrite.get('token',os.getenv('CG_TOKEN',''))
-	APPNAME = env_overwrite.get('appname', os.getenv('CG_APP_NAME',''))
-	URL = env_overwrite.get('url',os.getenv('CG_API_URL','https://sandbox.cigi.illinois.edu/home/rest/'))
+	USERNAME = env_overwrite.get('username',
+		os.getenv('CG_USERNAME',''))
+	TOKEN = env_overwrite.get('token',
+		os.getenv('CG_TOKEN',''))
+	APPNAME = env_overwrite.get('appname', 
+		os.getenv('CG_APP_NAME',''))
+	URL = env_overwrite.get('url',
+		os.getenv('CG_API_URL',
+			'https://sandbox.cigi.illinois.edu/home/rest/')
+		)
 	if not TOKEN :
 		sys.stderr.write('No valid CG_TOKEN given\n')
 		exit()
@@ -85,8 +100,13 @@ def registerApp() :
 	# App configure is also a POST call
 	# Get app information/configuration are GET calls
 	try:
-		request_ret = requests.post(URL,data=request_json,timeout=50,verify=False)
-	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
+		request_ret = requests.post(URL,
+			data=request_json,
+			timeout=50,
+			verify=False)
+	except (requests.exceptions.ConnectionError,
+		requests.exceptions.HTTPError,
+		requests.exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
@@ -97,7 +117,10 @@ def registerApp() :
 	# Check for errors sent back in the response
 	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Register App \"%s\" (HTTP POST)' %APPNAME, request_json, response_json,URL)
+		printResponse('Register App \"%s\" (HTTP POST)' %APPNAME, 
+			request_json, 
+			response_json,
+			URL)
 	# on success, return the registered app's name
 	try :
 		return response_json['result']['app']
@@ -109,9 +132,14 @@ def registerApp() :
 # get app info and write it in JSON format to the destfile given as argument
 def getAppInfo(dest_filename) :
 	global verbose
-	TOKEN = env_overwrite.get('token',os.getenv('CG_TOKEN',''))
-	APPNAME = env_overwrite.get('appname', os.getenv('CG_APP_NAME',''))
-	URL = env_overwrite.get('url',os.getenv('CG_API_URL','https://sandbox.cigi.illinois.edu/home/rest/'))
+	TOKEN = env_overwrite.get('token',
+		os.getenv('CG_TOKEN',''))
+	APPNAME = env_overwrite.get('appname', 
+		os.getenv('CG_APP_NAME',''))
+	URL = env_overwrite.get('url',
+		os.getenv('CG_API_URL',
+			'https://sandbox.cigi.illinois.edu/home/rest/')
+		)
 	if not TOKEN :
 		sys.stderr.write('No valid CG_TOKEN given\n')
 		exit()
@@ -125,8 +153,13 @@ def getAppInfo(dest_filename) :
 	URL += "app"
 	# Make a GET RESTful call
 	try :
-		request_ret = requests.get(URL, params=request_json,timeout=50,verify=False)
-	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
+		request_ret = requests.get(URL, 
+			params=request_json,
+			timeout=50,
+			verify=False)
+	except (requests.exceptions.ConnectionError,
+		requests.exceptions.HTTPError,
+		requests.exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
@@ -136,10 +169,17 @@ def getAppInfo(dest_filename) :
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Get app info for \"%s\" (HTTP GET)' %APPNAME, request_json, response_json,URL)
+		printResponse('Get app info for \"%s\" (HTTP GET)' %APPNAME, 
+		request_json, 
+		response_json,
+		URL)
 	# Dump the response JSON (the app info) into the destination file
 	with open(dest_filename, 'w') as outfile :
-		json.dump(response_json,outfile,indent=4,separators=(',', ': '))
+		json.dump(response_json,
+			outfile,
+			indent=4,
+			separators=(',', ': ')
+			)
 		outfile.write('\n')
 		outfile.close()
 	# if successful, return True
@@ -148,10 +188,16 @@ def getAppInfo(dest_filename) :
 # configure app with config JSON read in from a file
 def configApp(config_filename) :
 	global verbose
-	USERNAME = env_overwrite.get('username',os.getenv('CG_USERNAME',''))
-	TOKEN = env_overwrite.get('token',os.getenv('CG_TOKEN',''))
-	APPNAME = env_overwrite.get('appname', os.getenv('CG_APP_NAME',''))
-	URL = env_overwrite.get('url',os.getenv('CG_API_URL','https://sandbox.cigi.illinois.edu/home/rest/'))
+	USERNAME = env_overwrite.get('username',
+		os.getenv('CG_USERNAME',''))
+	TOKEN = env_overwrite.get('token',
+		os.getenv('CG_TOKEN',''))
+	APPNAME = env_overwrite.get('appname', 
+		os.getenv('CG_APP_NAME',''))
+	URL = env_overwrite.get('url',
+		os.getenv('CG_API_URL',
+			'https://sandbox.cigi.illinois.edu/home/rest/')
+		)
 	if not TOKEN :
 		sys.stderr.write('No valid CG_TOKEN given\n')
 		exit()
@@ -172,8 +218,13 @@ def configApp(config_filename) :
 	URL += "appconfig"
 	# Make RESTful POST call
 	try : 
-		request_ret = requests.post(URL,data=request_json,timeout=50,verify=False)
-	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
+		request_ret = requests.post(URL,
+			data=request_json,
+			timeout=50,
+			verify=False)
+	except (requests.exceptions.ConnectionError,
+		requests.exceptions.HTTPError,
+		requests.exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
@@ -183,17 +234,26 @@ def configApp(config_filename) :
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Configure app  \"%s\" (HTTP POST)' %APPNAME, request_json, response_json,URL)
+		printResponse('Configure app  \"%s\" (HTTP POST)' %APPNAME, 
+			request_json, 
+			response_json,
+			URL)
 	# If correctly configured, return true
 	return True
 
 # get app config and write it in JSON format to the destfile given as an argument
 def getAppConfig(dest_filename) :
 	global verbose
-	USERNAME = env_overwrite.get('username',os.getenv('CG_USERNAME',''))
-	TOKEN = env_overwrite.get('token',os.getenv('CG_TOKEN',''))
-	APPNAME = env_overwrite.get('appname', os.getenv('CG_APP_NAME',''))
-	URL = env_overwrite.get('url',os.getenv('CG_API_URL','https://sandbox.cigi.illinois.edu/home/rest/'))
+	USERNAME = env_overwrite.get('username',
+		os.getenv('CG_USERNAME',''))
+	TOKEN = env_overwrite.get('token',
+		os.getenv('CG_TOKEN',''))
+	APPNAME = env_overwrite.get('appname', 
+		os.getenv('CG_APP_NAME',''))
+	URL = env_overwrite.get('url',
+		os.getenv('CG_API_URL',
+			'https://sandbox.cigi.illinois.edu/home/rest/')
+		)
 	if not TOKEN :
 		sys.stderr.write('No valid CG_TOKEN given\n')
 		exit()
@@ -207,8 +267,13 @@ def getAppConfig(dest_filename) :
 	URL += "appconfig"
 	# Make a GET RESTful call
 	try :
-		request_ret = requests.get(URL, params=request_json,timeout=50, verify=False)
-	except (requests.exceptions.ConnectionError,requests.exceptions.HTTPError,requests.exceptions.MissingSchema) :
+		request_ret = requests.get(URL, 
+			params=request_json,
+			timeout=50, 
+			verify=False)
+	except (requests.exceptions.ConnectionError,
+		requests.exceptions.HTTPError,
+		requests.exceptions.MissingSchema) :
 		sys.stderr.write('Problem with API URL - Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (requests.exceptions.Timeout) :
@@ -218,10 +283,17 @@ def getAppConfig(dest_filename) :
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
 	if(verbose) :
-		printResponse('Get app config for \"%s\" (HTTP GET)' %APPNAME, request_json, response_json,URL)
+		printResponse('Get app config for \"%s\" (HTTP GET)' %APPNAME, 
+			request_json, 
+			response_json,
+			URL)
 	# Dump the response JSON (the app config) into the destination file
 	with open(dest_filename, 'w') as outfile :
-		json.dump(response_json,outfile,indent=4,separators=(',',': '))
+		json.dump(response_json,
+			outfile,
+			indent=4,
+			separators=(',',': ')
+			)
 		outfile.write('\n')
 		outfile.close()
 	# If successful, return True
