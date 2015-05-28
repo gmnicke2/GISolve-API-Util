@@ -1,0 +1,854 @@
+
+INFO - 2015-05-28 18:16:00,248
+ISSUING TOKEN
+
+DEBUG - 2015-05-28 18:16:00,248
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:00,248
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:00,305
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:00,305
+Response JSON created successfully
+
+DEBUG - 2015-05-28 18:16:00,305
+Response JSON indicates "success"
+
+DEBUG - 2015-05-28 18:16:00,305
+URL: https://sandbox.cigi.illinois.edu/home/rest/token
+
+DEBUG - 2015-05-28 18:16:00,305
+Request: Issue Token (HTTP POST)
+
+DEBUG - 2015-05-28 18:16:00,305
+Request Data (in JSON format): {
+    "username": "gmnicke2",
+    "lifetime": 54000,
+    "password": "*******",
+    "binding": 1
+}
+
+DEBUG - 2015-05-28 18:16:00,305
+Response (in JSON format): {
+    "status": "success",
+    "result": {
+        "username": "gmnicke2",
+        "lifetime": 43200,
+        "token": "cybergis_token_mctynCDwQm7OPptw",
+        "created": 1432854966
+    }
+}
+
+INFO - 2015-05-28 18:16:00,305
+Token cybergis_token_mctynCDwQm7OPptw created successfully
+
+INFO - 2015-05-28 18:16:01,061
+ISSUING TOKEN
+
+DEBUG - 2015-05-28 18:16:01,061
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:01,061
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:01,123
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:01,123
+Response JSON created successfully
+
+DEBUG - 2015-05-28 18:16:01,123
+Response JSON indicates "success"
+
+DEBUG - 2015-05-28 18:16:01,123
+URL: https://sandbox.cigi.illinois.edu/home/rest/token
+
+DEBUG - 2015-05-28 18:16:01,123
+Request: Issue Token (HTTP POST)
+
+DEBUG - 2015-05-28 18:16:01,123
+Request Data (in JSON format): {
+    "username": "gmnicke2",
+    "lifetime": 54000,
+    "password": "*******",
+    "binding": 1
+}
+
+DEBUG - 2015-05-28 18:16:01,123
+Response (in JSON format): {
+    "status": "success",
+    "result": {
+        "username": "gmnicke2",
+        "lifetime": 43200,
+        "token": "cybergis_token_G1EHcoBsu4SX84QW",
+        "created": 1432854967
+    }
+}
+
+INFO - 2015-05-28 18:16:01,123
+Token cybergis_token_G1EHcoBsu4SX84QW created successfully
+
+INFO - 2015-05-28 18:16:01,884
+VERIFYING TOKEN "cybergis_token_G1EHcoBsu4SX84QW"
+
+DEBUG - 2015-05-28 18:16:01,884
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:01,884
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:01,942
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:01,942
+Response JSON created successfully
+
+ERROR - 2015-05-28 18:16:01,942
+Request Failed
+Error 4: "Invalid consumer"
+
+INFO - 2015-05-28 18:16:02,697
+REVOKING TOKEN "cybergis_token_G1EHcoBsu4SX84QW"
+
+DEBUG - 2015-05-28 18:16:02,697
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:02,698
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:02,768
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:02,769
+Response JSON created successfully
+
+ERROR - 2015-05-28 18:16:02,769
+Request Failed
+Error 1: "Username or password is invalid. This event has been recorded"
+
+INFO - 2015-05-28 18:16:03,511
+REVOKING TOKEN "cybergis_token_G1EHcoBsu4SX84QW"
+
+DEBUG - 2015-05-28 18:16:03,511
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:03,511
+URL passed host name tests
+
+ERROR - 2015-05-28 18:16:03,537
+Problem with API url - Is it entered correctly?
+
+INFO - 2015-05-28 18:16:04,323
+REVOKING TOKEN "cybergis_token_G1EHcoBsu4SX84QW"
+
+DEBUG - 2015-05-28 18:16:04,323
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:04,324
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:04,384
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:04,384
+Response JSON created successfully
+
+DEBUG - 2015-05-28 18:16:04,384
+Response JSON indicates "success"
+
+DEBUG - 2015-05-28 18:16:04,384
+URL: https://sandbox.cigi.illinois.edu/home/rest/token
+
+DEBUG - 2015-05-28 18:16:04,384
+Request: Revoke Token cybergis_token_G1EHcoBsu4SX84QW (HTTP DELETE)
+
+DEBUG - 2015-05-28 18:16:04,385
+Request Data (in JSON format): {
+    "username": "gmnicke2",
+    "token": "cybergis_token_G1EHcoBsu4SX84QW",
+    "password": "*******"
+}
+
+DEBUG - 2015-05-28 18:16:04,385
+Response (in JSON format): {
+    "status": "success"
+}
+
+INFO - 2015-05-28 18:16:04,385
+Token cybergis_token_G1EHcoBsu4SX84QW successfully revoked
+
+INFO - 2015-05-28 18:16:05,154
+ISSUING TOKEN
+
+DEBUG - 2015-05-28 18:16:05,154
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:05,154
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:05,213
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:05,214
+Response JSON created successfully
+
+DEBUG - 2015-05-28 18:16:05,214
+Response JSON indicates "success"
+
+DEBUG - 2015-05-28 18:16:05,214
+URL: https://sandbox.cigi.illinois.edu/home/rest/token
+
+DEBUG - 2015-05-28 18:16:05,214
+Request: Issue Token (HTTP POST)
+
+DEBUG - 2015-05-28 18:16:05,214
+Request Data (in JSON format): {
+    "username": "gmnicke2",
+    "lifetime": 54000,
+    "password": "*******",
+    "binding": 1
+}
+
+DEBUG - 2015-05-28 18:16:05,214
+Response (in JSON format): {
+    "status": "success",
+    "result": {
+        "username": "gmnicke2",
+        "lifetime": 43200,
+        "token": "cybergis_token_sZriToHBmjedhnHJ",
+        "created": 1432854971
+    }
+}
+
+INFO - 2015-05-28 18:16:05,214
+Token cybergis_token_sZriToHBmjedhnHJ created successfully
+
+INFO - 2015-05-28 18:16:05,954
+REGISTERING APP: "TESTAPP"
+
+DEBUG - 2015-05-28 18:16:05,954
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:05,954
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:06,036
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:06,037
+Response JSON created successfully
+
+DEBUG - 2015-05-28 18:16:06,037
+Response JSON indicates "success"
+
+DEBUG - 2015-05-28 18:16:06,037
+URL: https://sandbox.cigi.illinois.edu/home/rest/app
+
+DEBUG - 2015-05-28 18:16:06,037
+Request: Register App "TESTAPP" (HTTP POST)
+
+DEBUG - 2015-05-28 18:16:06,037
+Request Data (in JSON format): {
+    "info": "<h2>TESTAPP</h2><p>Description of App (TESTAPP) Goes Here</p><p>Author: gmnicke2</p>",
+    "author": "gmnicke2",
+    "app": "TESTAPP",
+    "tags": "test, app, gmnicke2",
+    "token": "cybergis_token_sZriToHBmjedhnHJ",
+    "version": "V0.1",
+    "longname": "Test app by gmnicke2",
+    "password": "*******"
+}
+
+DEBUG - 2015-05-28 18:16:06,037
+Response (in JSON format): {
+    "status": "success",
+    "message": "Your application has been successfully created/updated.",
+    "result": {
+        "app": "TESTAPP",
+        "created": "1432311032",
+        "creator": "gmnicke2"
+    }
+}
+
+INFO - 2015-05-28 18:16:06,037
+App "TESTAPP" successfully registered
+
+ERROR - 2015-05-28 18:16:06,779
+Config File Doesn't Exist
+
+
+INFO - 2015-05-28 18:16:07,572
+CONFIGURING APP: "TESTAPP"
+
+INFO - 2015-05-28 18:16:07,572
+Config File: "config.json"
+
+DEBUG - 2015-05-28 18:16:07,572
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:07,572
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:07,682
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:07,682
+Response JSON created successfully
+
+DEBUG - 2015-05-28 18:16:07,682
+Response JSON indicates "success"
+
+DEBUG - 2015-05-28 18:16:07,682
+URL: https://sandbox.cigi.illinois.edu/home/rest/appconfig
+
+DEBUG - 2015-05-28 18:16:07,683
+Request: Configure app  "TESTAPP" (HTTP POST)
+
+DEBUG - 2015-05-28 18:16:07,683
+Request Data (in JSON format): {
+    "token": "cybergis_token_sZriToHBmjedhnHJ",
+    "password": "*******",
+    "config": "{\"description\": \"config of example application\", \"parameters\": {\"param4\": {\"description\": \"\", \"datatype\": \"string\", \"label\": \"results/output.dat\", \"default\": \"\", \"fixed\": \"results/output.dat\", \"optional\": false, \"name\": \"param4\"}, \"param3\": {\"description\": \"URL of the input point dataset in proprietary format\", \"datatype\": \"url\", \"label\": \"input_file\", \"default\": \"\", \"optional\": false, \"name\": \"param3\"}, \"param2\": {\"description\": \"K value of kNN search\", \"min\": \"1\", \"datatype\": \"integer\", \"max\": \"100\", \"label\": \"k\", \"default\": \"5\", \"optional\": false, \"name\": \"param2\"}, \"param1\": {\"description\": \"Y-dimension resolution\", \"min\": \"50\", \"datatype\": \"integer\", \"max\": \"1000\", \"label\": \"resolution_y\", \"default\": \"500\", \"optional\": false, \"name\": \"param1\"}, \"param0\": {\"description\": \"X-dimension resolution\", \"min\": \"50\", \"datatype\": \"integer\", \"max\": \"1000\", \"label\": \"resolution_x\", \"default\": \"500\", \"optional\": false, \"name\": \"param0\"}}, \"name\": \"TESTAPP\"}",
+    "app": "TESTAPP"
+}
+
+DEBUG - 2015-05-28 18:16:07,683
+Response (in JSON format): {
+    "status": "success",
+    "result": {
+        "app": "TESTAPP",
+        "config": {
+            "name": "TESTAPP",
+            "parameters": {
+                "param4": {
+                    "description": "",
+                    "datatype": "string",
+                    "label": "results/output.dat",
+                    "default": "",
+                    "fixed": "results/output.dat",
+                    "optional": false,
+                    "name": "param4"
+                },
+                "param3": {
+                    "description": "URL of the input point dataset in proprietary format",
+                    "default": "",
+                    "label": "input_file",
+                    "datatype": "url",
+                    "optional": false,
+                    "name": "param3"
+                },
+                "param2": {
+                    "description": "K value of kNN search",
+                    "min": "1",
+                    "default": "5",
+                    "max": "100",
+                    "label": "k",
+                    "datatype": "integer",
+                    "optional": false,
+                    "name": "param2"
+                },
+                "param1": {
+                    "description": "Y-dimension resolution",
+                    "min": "50",
+                    "default": "500",
+                    "max": "1000",
+                    "label": "resolution_y",
+                    "datatype": "integer",
+                    "optional": false,
+                    "name": "param1"
+                },
+                "param0": {
+                    "description": "X-dimension resolution",
+                    "min": "50",
+                    "default": "500",
+                    "max": "1000",
+                    "label": "resolution_x",
+                    "datatype": "integer",
+                    "optional": false,
+                    "name": "param0"
+                }
+            },
+            "joints": [],
+            "disjoints": [],
+            "groups": [],
+            "description": "config of example application"
+        }
+    }
+}
+
+INFO - 2015-05-28 18:16:07,683
+"TESTAPP" successfully configured from config file "config.json"
+
+INFO - 2015-05-28 18:16:08,434
+GETTING APP INFO FROM: "TESTAPP"
+
+INFO - 2015-05-28 18:16:08,434
+Writing info to "getinfo_out.json"
+
+DEBUG - 2015-05-28 18:16:08,434
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:08,434
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:08,498
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:08,499
+Response JSON created successfully
+
+DEBUG - 2015-05-28 18:16:08,499
+Response JSON indicates "success"
+
+DEBUG - 2015-05-28 18:16:08,499
+URL: https://sandbox.cigi.illinois.edu/home/rest/app
+
+DEBUG - 2015-05-28 18:16:08,499
+Request: Get app info for "TESTAPP" (HTTP GET)
+
+DEBUG - 2015-05-28 18:16:08,499
+Request Data (in JSON format): {
+    "token": "cybergis_token_sZriToHBmjedhnHJ",
+    "password": "*******",
+    "app": "TESTAPP"
+}
+
+DEBUG - 2015-05-28 18:16:08,499
+Response (in JSON format): {
+    "status": "success",
+    "result": {
+        "info": "<h2>TESTAPP</h2><p>Description of App (TESTAPP) Goes Here</p><p>Author: gmnicke2</p>",
+        "lastupdate": "1432854971",
+        "creator": "gmnicke2",
+        "app": "TESTAPP",
+        "author": "gmnicke2",
+        "created": "1432311032",
+        "version": "V0.1",
+        "longname": "Test app by gmnicke2"
+    }
+}
+
+INFO - 2015-05-28 18:16:08,500
+"TESTAPP" info successfully written to "getinfo_out.json"
+
+INFO - 2015-05-28 18:16:09,247
+GETTING APP INFO FROM: "TESTAPP"
+
+ERROR - 2015-05-28 18:16:09,247
+No destination file specified for get app info
+
+INFO - 2015-05-28 18:16:10,026
+GETTING APP INFO FROM: "TESTAPP"
+
+INFO - 2015-05-28 18:16:10,026
+Writing info to "getinfo_out.json"
+
+DEBUG - 2015-05-28 18:16:10,026
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:10,026
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:10,092
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:10,093
+Response JSON created successfully
+
+DEBUG - 2015-05-28 18:16:10,093
+Response JSON indicates "success"
+
+DEBUG - 2015-05-28 18:16:10,093
+URL: https://sandbox.cigi.illinois.edu/home/rest/app
+
+DEBUG - 2015-05-28 18:16:10,093
+Request: Get app info for "TESTAPP" (HTTP GET)
+
+DEBUG - 2015-05-28 18:16:10,093
+Request Data (in JSON format): {
+    "token": "cybergis_token_sZriToHBmjedhnHJ",
+    "password": "*******",
+    "app": "TESTAPP"
+}
+
+DEBUG - 2015-05-28 18:16:10,093
+Response (in JSON format): {
+    "status": "success",
+    "result": {
+        "info": "<h2>TESTAPP</h2><p>Description of App (TESTAPP) Goes Here</p><p>Author: gmnicke2</p>",
+        "lastupdate": "1432854971",
+        "creator": "gmnicke2",
+        "app": "TESTAPP",
+        "author": "gmnicke2",
+        "created": "1432311032",
+        "version": "V0.1",
+        "longname": "Test app by gmnicke2"
+    }
+}
+
+INFO - 2015-05-28 18:16:10,094
+"TESTAPP" info successfully written to "getinfo_out.json"
+
+INFO - 2015-05-28 18:16:10,866
+GETTING APP INFO FROM: "TESTAPP"
+
+INFO - 2015-05-28 18:16:10,866
+Writing info to "getinfo_otherout.json"
+
+DEBUG - 2015-05-28 18:16:10,866
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:10,866
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:10,933
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:10,933
+Response JSON created successfully
+
+DEBUG - 2015-05-28 18:16:10,933
+Response JSON indicates "success"
+
+DEBUG - 2015-05-28 18:16:10,933
+URL: https://sandbox.cigi.illinois.edu/home/rest/app
+
+DEBUG - 2015-05-28 18:16:10,933
+Request: Get app info for "TESTAPP" (HTTP GET)
+
+DEBUG - 2015-05-28 18:16:10,933
+Request Data (in JSON format): {
+    "token": "cybergis_token_sZriToHBmjedhnHJ",
+    "password": "*******",
+    "app": "TESTAPP"
+}
+
+DEBUG - 2015-05-28 18:16:10,933
+Response (in JSON format): {
+    "status": "success",
+    "result": {
+        "info": "<h2>TESTAPP</h2><p>Description of App (TESTAPP) Goes Here</p><p>Author: gmnicke2</p>",
+        "lastupdate": "1432854971",
+        "creator": "gmnicke2",
+        "app": "TESTAPP",
+        "author": "gmnicke2",
+        "created": "1432311032",
+        "version": "V0.1",
+        "longname": "Test app by gmnicke2"
+    }
+}
+
+INFO - 2015-05-28 18:16:10,934
+"TESTAPP" info successfully written to "getinfo_otherout.json"
+
+INFO - 2015-05-28 18:16:11,700
+GETTING APP CONFIG FROM: "TESTAPP"
+
+INFO - 2015-05-28 18:16:11,700
+Writing config to "getconfig_out.json"
+
+DEBUG - 2015-05-28 18:16:11,700
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:11,700
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:11,765
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:11,765
+Response JSON created successfully
+
+DEBUG - 2015-05-28 18:16:11,765
+Response JSON indicates "success"
+
+DEBUG - 2015-05-28 18:16:11,765
+URL: https://sandbox.cigi.illinois.edu/home/rest/appconfig
+
+DEBUG - 2015-05-28 18:16:11,765
+Request: Get app config for "TESTAPP" (HTTP GET)
+
+DEBUG - 2015-05-28 18:16:11,766
+Request Data (in JSON format): {
+    "token": "cybergis_token_sZriToHBmjedhnHJ",
+    "password": "*******",
+    "app": "TESTAPP"
+}
+
+DEBUG - 2015-05-28 18:16:11,766
+Response (in JSON format): {
+    "status": "success",
+    "result": {
+        "app": "TESTAPP",
+        "config": {
+            "name": "TESTAPP",
+            "parameters": {
+                "param4": {
+                    "description": "",
+                    "datatype": "string",
+                    "label": "results/output.dat",
+                    "default": "",
+                    "fixed": "results/output.dat",
+                    "optional": false,
+                    "name": "param4"
+                },
+                "param3": {
+                    "description": "URL of the input point dataset in proprietary format",
+                    "default": "",
+                    "label": "input_file",
+                    "datatype": "url",
+                    "optional": false,
+                    "name": "param3"
+                },
+                "param2": {
+                    "description": "K value of kNN search",
+                    "min": "1",
+                    "default": "5",
+                    "max": "100",
+                    "label": "k",
+                    "datatype": "integer",
+                    "optional": false,
+                    "name": "param2"
+                },
+                "param1": {
+                    "description": "Y-dimension resolution",
+                    "min": "50",
+                    "default": "500",
+                    "max": "1000",
+                    "label": "resolution_y",
+                    "datatype": "integer",
+                    "optional": false,
+                    "name": "param1"
+                },
+                "param0": {
+                    "description": "X-dimension resolution",
+                    "min": "50",
+                    "default": "500",
+                    "max": "1000",
+                    "label": "resolution_x",
+                    "datatype": "integer",
+                    "optional": false,
+                    "name": "param0"
+                }
+            },
+            "joints": [],
+            "disjoints": [],
+            "groups": [],
+            "description": "config of example application"
+        }
+    }
+}
+
+INFO - 2015-05-28 18:16:11,766
+"TESTAPP" config successfully written to "getconfig_out.json"
+
+INFO - 2015-05-28 18:16:12,520
+GETTING APP CONFIG FROM: "TESTAPP"
+
+ERROR - 2015-05-28 18:16:12,520
+No destination file specified for get app config
+
+INFO - 2015-05-28 18:16:13,300
+GETTING APP CONFIG FROM: "TESTAPP"
+
+INFO - 2015-05-28 18:16:13,300
+Writing config to "getconfig_out.json"
+
+DEBUG - 2015-05-28 18:16:13,300
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:13,300
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:13,361
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:13,361
+Response JSON created successfully
+
+DEBUG - 2015-05-28 18:16:13,361
+Response JSON indicates "success"
+
+DEBUG - 2015-05-28 18:16:13,361
+URL: https://sandbox.cigi.illinois.edu/home/rest/appconfig
+
+DEBUG - 2015-05-28 18:16:13,361
+Request: Get app config for "TESTAPP" (HTTP GET)
+
+DEBUG - 2015-05-28 18:16:13,361
+Request Data (in JSON format): {
+    "token": "cybergis_token_sZriToHBmjedhnHJ",
+    "password": "*******",
+    "app": "TESTAPP"
+}
+
+DEBUG - 2015-05-28 18:16:13,361
+Response (in JSON format): {
+    "status": "success",
+    "result": {
+        "app": "TESTAPP",
+        "config": {
+            "name": "TESTAPP",
+            "parameters": {
+                "param4": {
+                    "description": "",
+                    "datatype": "string",
+                    "label": "results/output.dat",
+                    "default": "",
+                    "fixed": "results/output.dat",
+                    "optional": false,
+                    "name": "param4"
+                },
+                "param3": {
+                    "description": "URL of the input point dataset in proprietary format",
+                    "default": "",
+                    "label": "input_file",
+                    "datatype": "url",
+                    "optional": false,
+                    "name": "param3"
+                },
+                "param2": {
+                    "description": "K value of kNN search",
+                    "min": "1",
+                    "default": "5",
+                    "max": "100",
+                    "label": "k",
+                    "datatype": "integer",
+                    "optional": false,
+                    "name": "param2"
+                },
+                "param1": {
+                    "description": "Y-dimension resolution",
+                    "min": "50",
+                    "default": "500",
+                    "max": "1000",
+                    "label": "resolution_y",
+                    "datatype": "integer",
+                    "optional": false,
+                    "name": "param1"
+                },
+                "param0": {
+                    "description": "X-dimension resolution",
+                    "min": "50",
+                    "default": "500",
+                    "max": "1000",
+                    "label": "resolution_x",
+                    "datatype": "integer",
+                    "optional": false,
+                    "name": "param0"
+                }
+            },
+            "joints": [],
+            "disjoints": [],
+            "groups": [],
+            "description": "config of example application"
+        }
+    }
+}
+
+INFO - 2015-05-28 18:16:13,362
+"TESTAPP" config successfully written to "getconfig_out.json"
+
+INFO - 2015-05-28 18:16:14,132
+GETTING APP CONFIG FROM: "TESTAPP"
+
+INFO - 2015-05-28 18:16:14,132
+Writing config to "getconfig_otherout.json"
+
+DEBUG - 2015-05-28 18:16:14,132
+Testing URL host name validity
+
+DEBUG - 2015-05-28 18:16:14,132
+URL passed host name tests
+
+DEBUG - 2015-05-28 18:16:14,197
+Checking for errors from server's response
+
+DEBUG - 2015-05-28 18:16:14,197
+Response JSON created successfully
+
+DEBUG - 2015-05-28 18:16:14,197
+Response JSON indicates "success"
+
+DEBUG - 2015-05-28 18:16:14,198
+URL: https://sandbox.cigi.illinois.edu/home/rest/appconfig
+
+DEBUG - 2015-05-28 18:16:14,198
+Request: Get app config for "TESTAPP" (HTTP GET)
+
+DEBUG - 2015-05-28 18:16:14,198
+Request Data (in JSON format): {
+    "token": "cybergis_token_sZriToHBmjedhnHJ",
+    "password": "*******",
+    "app": "TESTAPP"
+}
+
+DEBUG - 2015-05-28 18:16:14,198
+Response (in JSON format): {
+    "status": "success",
+    "result": {
+        "app": "TESTAPP",
+        "config": {
+            "name": "TESTAPP",
+            "parameters": {
+                "param4": {
+                    "description": "",
+                    "datatype": "string",
+                    "label": "results/output.dat",
+                    "default": "",
+                    "fixed": "results/output.dat",
+                    "optional": false,
+                    "name": "param4"
+                },
+                "param3": {
+                    "description": "URL of the input point dataset in proprietary format",
+                    "default": "",
+                    "label": "input_file",
+                    "datatype": "url",
+                    "optional": false,
+                    "name": "param3"
+                },
+                "param2": {
+                    "description": "K value of kNN search",
+                    "min": "1",
+                    "default": "5",
+                    "max": "100",
+                    "label": "k",
+                    "datatype": "integer",
+                    "optional": false,
+                    "name": "param2"
+                },
+                "param1": {
+                    "description": "Y-dimension resolution",
+                    "min": "50",
+                    "default": "500",
+                    "max": "1000",
+                    "label": "resolution_y",
+                    "datatype": "integer",
+                    "optional": false,
+                    "name": "param1"
+                },
+                "param0": {
+                    "description": "X-dimension resolution",
+                    "min": "50",
+                    "default": "500",
+                    "max": "1000",
+                    "label": "resolution_x",
+                    "datatype": "integer",
+                    "optional": false,
+                    "name": "param0"
+                }
+            },
+            "joints": [],
+            "disjoints": [],
+            "groups": [],
+            "description": "config of example application"
+        }
+    }
+}
+
+INFO - 2015-05-28 18:16:14,198
+"TESTAPP" config successfully written to "getconfig_otherout.json"
