@@ -36,10 +36,10 @@ echo DONE
 echo Configuring \"$CG_APP_NAME\" with config file \"$CONFIG_FILE\"
 python cg_app.py -act configure -cf $CONFIG_FILE -v
 echo DONE
-echo Getting info about \"$CG_APP_NAME\"
+echo Writing info about \"$CG_APP_NAME\" to \"$GETINFO_FILE\"
 python cg_app.py -act getinfo -v
 echo DONE
-echo Getting config of \"$APPNAME2\"
+echo Writing config of \"$APPNAME2\" to \"$GETCONFIG_FILE\"
 python cg_app.py -act getconfig -v
 echo DONE
 echo FIN
