@@ -299,10 +299,8 @@ def main() :
 				token,
 				"getinfo_out.json")
 		else : # if default path exists, don't overwrite it, just print help & exit
-			logger.error('No destination file specified'
+			reportError('No destination file specified'
 					' for get app info')
-			parser.print_help()
-			exit()
 	elif action == 'getconfig' :
 		# check if destination file was specified in command-line arguments
 		logger.info('GETTING APP CONFIG FROM: "%s"' %appname)
@@ -319,10 +317,8 @@ def main() :
 				token,
 				"getconfig_out.json")
 		else : # if default path exists, don't overwrite it, just print help & exit
-			logger.error('No destination file specified'
+			reportError('No destination file specified'
 					' for get app config')
-			parser.print_help()
-			exit()
 	else :
 		parser.print_help()
 		exit()
