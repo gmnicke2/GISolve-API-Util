@@ -3,7 +3,7 @@
 
 from cg_extras import *
 import json
-import os, sys
+import os, sys, logging
 import argparse
 import requests
 from requests import exceptions
@@ -11,6 +11,8 @@ import getpass
 
 # Used to disable InsecureRequestWarning that occurs with this API
 requests.packages.urllib3.disable_warnings()
+
+logger = logging.getLogger('CG LOGGER')
 
 # any argument used to overwrite environ vars is stored here;
 # it is accessed throughout the code with the format:
@@ -21,11 +23,17 @@ env_overwrite = {}
 
 #parses command line arguments (gives help if done incorrectly)
 def parseArgs() :
-	verbose = False
+	# parse command line arguments
 	parser = argparse.ArgumentParser()
+	parser.add_argument("-d", "--debug",
+		action="store_true",
+		help='Allow debug info to be written to "cg_log.log"')
 	parser.add_argument("-v", "--verbose",
-		action="store_true", 
-		help="Print results/errors to stdout")
+		action="store_true",
+		help='Allow non-debug info to be written to "cg_log.log"')
+	parser.add_argument("--clearlog",
+		action="store_true",
+		help='Clear Log ("cg_log.log")')
 	parser.add_argument("-p", "--password",
 		action="store_true", 
 		help="Choose to enter different Password")
@@ -45,14 +53,11 @@ def parseArgs() :
 	if not args.action :
 		parser.print_help()
 		exit()
-	os.environ['CG_ACTION'] = args.action
-	if args.verbose :
-		verbose = True
 	if args.password :
 		env_overwrite['password'] = getpass.getpass('Enter CG Password: ')
-	#used for OpenService API calls (which make REST calls)
+	# overwrite environ variables if command line args given
 	for arg in vars(args) :
-		if getattr(args,arg) and (arg != 'verbose' and arg != 'password'):
+		if getattr(args,arg) and (arg != 'debug' and arg != 'password'):
 			env_overwrite[arg] = getattr(args,arg)
 	#append a terminating '/' if non-existent in API URL
 	if env_overwrite.get('url','') and not env_overwrite.get('url','').endswith('/') :
@@ -60,27 +65,28 @@ def parseArgs() :
 	elif os.getenv('CG_API_URL','') and not os.getenv('CG_API_URL','').endswith('/') :
 		os.environ['CG_API_URL'] += '/'
 	elif not os.getenv('CG_API_URL','') :
-		sys.stderr.write('CG_API_URL (API URL for REST calls)' 
+		logger.error('CG_API_URL (API URL for REST calls)' 
 				'not specified\n')
 		exit()
-	return (parser,args,verbose)
+	# Initialize Logger
+	logger_initialize(args.verbose,args.debug,args.clearlog)
+	return (parser,args,args.action.lower())
 
 ############################API CALLS##################################
 #issue token
-def issueToken(USERNAME,PASSWORD,URL,verbose) :
-	#A sample issue token request JSON
+def issueToken(USERNAME,PASSWORD,URL) :
+	logger.info("ISSUING TOKEN")
+	# A sample issue token request JSON
 	request_json = {'username' : USERNAME,
 		'password' : PASSWORD,
 		'lifetime' : 15*3600,
 		'binding' : 1
 	}
-	#Need to append "token" to the API URL
-	resource = "token"
-	#Append resource ("token") to URL
-	URL += resource
+	# Append resource ("token") to API URL
+	URL += 'token'
 	check_url_validity(URL)
-	#Make RESTful POST call to "token" resource
-	#Revoke would use DELETE, Verify would use PUT
+	# Make RESTful POST call to "token" resource
+	# Revoke would use DELETE, Verify would use PUT
 	try :
 		request_ret = requests.post(URL,
 			data=request_json,
@@ -89,40 +95,41 @@ def issueToken(USERNAME,PASSWORD,URL,verbose) :
 	except (exceptions.ConnectionError, 
 		exceptions.HTTPError, 
 		exceptions.MissingSchema) :
-		sys.stderr.write('Problem with API URL - ' 
+		logger.error('Problem with API URL - ' 
 				'Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (exceptions.Timeout) :
-		sys.stderr.write('Request timed out.\nTerminating.\n')
+		logger.error('Request timed out.\nTerminating.\n')
 		exit()
-	#Get the response from the REST POST in JSON format
+	# Get the response from the REST POST in JSON format
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
 	try :
-		os.environ['CG_TOKEN'] = response_json['result']['token']
+		token = response_json['result']['token']
 	except (TypeError,KeyError) :
-		sys.stderr.write("Token creation failed. (Check your arguments)\n")
+		logger.error("Token creation failed. "
+				"(Check your arguments)\n")
 		exit()
-	if(verbose) :
-		printResponse('Issue Token (HTTP POST)',
-			request_json,
-			response_json,
-			URL)
-	return os.getenv('CG_TOKEN','')
+	logResponse('Issue Token (HTTP POST)',
+		request_json,
+		response_json,
+		URL)
+	logger.info("Token %s created successfully" %token)
+	return token
 
-#verify token
-def verifyToken(USERNAME,PASSWORD,URL,CLIENT_ID,CLIENT_IP,TOKEN,verbose) :
+# verify token
+def verifyToken(USERNAME,PASSWORD,URL,CLIENT_ID,CLIENT_IP,TOKEN) :
+	logger.info('VERIFYING TOKEN "%s"' %TOKEN)
 	request_json = {
 		'consumer' : CLIENT_ID,
 		'remote_addr' : CLIENT_IP,
 		'token' : TOKEN,
 		'username' : USERNAME
 	}
-	resource = "token"
-	URL += resource
+	URL += 'token'
 	check_url_validity(URL)
 	request_length = str(len(json.dumps(request_json)))
-	#Set HTTP Header
+	# Set HTTP Header
 	headers = {'Content-Length' : request_length}
 	try :
 		request_ret = requests.put(URL,
@@ -133,35 +140,35 @@ def verifyToken(USERNAME,PASSWORD,URL,CLIENT_ID,CLIENT_IP,TOKEN,verbose) :
 	except (exceptions.ConnectionError,
 		exceptions.HTTPError,
 		exceptions.MissingSchema) :
-		sys.stderr.write('Problem with API URL - '
+		logger.error('Problem with API URL - '
 				'Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (exceptions.Timeout) :
-		sys.stderr.write('Request timed out.\nTerminating.\n')
+		logger.error('Request timed out.\nTerminating.\n')
 		exit()
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
-	if(verbose) :
-		printResponse('Verify Token "%s" (HTTP PUT)' %(TOKEN),
-			request_json,
-			response_json,
-			URL)
+	logResponse('Verify Token "%s" (HTTP PUT)' %(TOKEN),
+		request_json,
+		response_json,
+		URL)
 	if response_json['status'] == 'success' :
 		return True
 	else :
 		return False
 
 # revoke token
-def revokeToken(USERNAME,PASSWORD,URL,TOKEN,verbose) :	
+def revokeToken(USERNAME,PASSWORD,URL,TOKEN) :
+	logger.info('REVOKING TOKEN "%s"' %TOKEN)
 	request_json = {
 		'username' : USERNAME,
     		'password' : PASSWORD,
 		'token' : TOKEN
 	}
-	resource = "token"
-	URL += resource
+	URL += 'token'
 	check_url_validity(URL)
 	try :
+		# Make RESTful DELETE call
 		request_ret = requests.delete(URL,
 			params=request_json,
 			timeout=50,
@@ -169,30 +176,29 @@ def revokeToken(USERNAME,PASSWORD,URL,TOKEN,verbose) :
 	except (exceptions.ConnectionError,
 		exceptions.HTTPError,
 		exceptions.MissingSchema) :
-		sys.stderr.write('Problem with API URL - '
+		logger.error('Problem with API URL - '
 				'Is it entered correctly?\nTerminating.\n')
 		exit()
 	except (exceptions.Timeout) :
-		sys.stderr.write('Request timed out.\nTerminating.\n')
+		logger.error('Request timed out.\nTerminating.\n')
 		exit()
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
-	if(verbose) :
-		printResponse('Revoke Token %s (HTTP DELETE)' %TOKEN,
-			request_json,
-			response_json,
-			URL)
+	logResponse('Revoke Token %s (HTTP DELETE)' %TOKEN,
+		request_json,
+		response_json,
+		URL)
 	# Token was revoked successfully, so store empty string as environ token
 	if response_json['status'] == 'success' :
-		os.environ['token'] = ''
+		logger.info('Token %s successfully revoked' %TOKEN)
 		return True
 	else :
+		logger.info('Token %s revoke FAILED' %TOKEN)
 		return False
 
 def main() :
-	(parser,args,verbose) = parseArgs()
+	(parser,args,action) = parseArgs()
 	# Retrieve necessary info (either from env or overwritten while parsing)
-	action = os.getenv('CG_ACTION','None').lower()
 	USERNAME = env_overwrite.get('username', 
 		os.getenv('CG_USERNAME',''))
 	PASSWORD = env_overwrite.get('password', 
@@ -205,13 +211,12 @@ def main() :
 	if action == "issue" :
 		print issueToken(USERNAME,
 			PASSWORD,
-			URL,
-			verbose)
+			URL)
 	else :
 		TOKEN = env_overwrite.get('token',
 			os.getenv('CG_TOKEN',''))
 		if not TOKEN :
-			sys.stderr.write('No valid CG_TOKEN given\n')
+			logger.error('No valid CG_TOKEN given\n')
 			exit()
 		if action == "verify" :
 			CLIENT_ID = env_overwrite.get('clientid', 
@@ -223,14 +228,12 @@ def main() :
 				URL,
 				CLIENT_ID,
 				CLIENT_IP,
-				TOKEN,
-				verbose)
+				TOKEN)
 		elif action == "revoke" :
 			revokeToken(USERNAME,
 				PASSWORD,
 				URL,
-				TOKEN,
-				verbose)
+				TOKEN)
 		else :
 			parser.print_help()
 			exit()
