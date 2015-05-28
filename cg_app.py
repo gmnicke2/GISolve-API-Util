@@ -287,7 +287,7 @@ def main() :
 				token,
 				args.configfile)
 		else :
-			reportError('Config File Doesn\'t Exist\n')
+			reportError('Config File Doesn\'t Exist')
 	elif action == 'getinfo' :
 		# check if destination file was specified in command-line arguments
 		logger.info('GETTING APP INFO FROM: "%s"' %appname)
