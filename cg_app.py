@@ -121,7 +121,7 @@ def registerApp(username,appname,url,token) :
 
 # get app info and write it in JSON format to the destfile given as argument
 def getAppInfo(username,appname,url,token,dest_filename) :
-	logger.info('\nWriting info to "' + dest_filename + '"')
+	logger.info('Writing info to "' + dest_filename + '"')
 	request_json = {
 		'token' : token,
 		'app' : appname
