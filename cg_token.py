@@ -65,9 +65,8 @@ def parseArgs() :
 	elif os.getenv('CG_API_URL','') and not os.getenv('CG_API_URL','').endswith('/') :
 		os.environ['CG_API_URL'] += '/'
 	elif not os.getenv('CG_API_URL','') :
-		logger.error('CG_API_URL (API URL for REST calls)' 
+		reportError('CG_API_URL (API URL for REST calls)' 
 				'not specified\n')
-		exit()
 	# Initialize Logger
 	logger_initialize(args.verbose,args.debug,args.clearlog)
 	return (parser,args,args.action.lower())
@@ -75,7 +74,6 @@ def parseArgs() :
 ############################API CALLS##################################
 #issue token
 def issueToken(USERNAME,PASSWORD,URL) :
-	logger.info("ISSUING TOKEN")
 	# A sample issue token request JSON
 	request_json = {'username' : USERNAME,
 		'password' : PASSWORD,
@@ -95,21 +93,18 @@ def issueToken(USERNAME,PASSWORD,URL) :
 	except (exceptions.ConnectionError, 
 		exceptions.HTTPError, 
 		exceptions.MissingSchema) :
-		logger.error('Problem with API URL - ' 
+		reportError('Problem with API URL - ' 
 				'Is it entered correctly?\nTerminating.\n')
-		exit()
 	except (exceptions.Timeout) :
-		logger.error('Request timed out.\nTerminating.\n')
-		exit()
+		reportError('Request timed out.\nTerminating.\n')
 	# Get the response from the REST POST in JSON format
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
 	try :
 		token = response_json['result']['token']
 	except (TypeError,KeyError) :
-		logger.error("Token creation failed. "
+		reportError("Token creation failed. "
 				"(Check your arguments)\n")
-		exit()
 	logResponse('Issue Token (HTTP POST)',
 		request_json,
 		response_json,
@@ -119,7 +114,6 @@ def issueToken(USERNAME,PASSWORD,URL) :
 
 # verify token
 def verifyToken(USERNAME,PASSWORD,URL,CLIENT_ID,CLIENT_IP,TOKEN) :
-	logger.info('VERIFYING TOKEN "%s"' %TOKEN)
 	request_json = {
 		'consumer' : CLIENT_ID,
 		'remote_addr' : CLIENT_IP,
@@ -140,12 +134,10 @@ def verifyToken(USERNAME,PASSWORD,URL,CLIENT_ID,CLIENT_IP,TOKEN) :
 	except (exceptions.ConnectionError,
 		exceptions.HTTPError,
 		exceptions.MissingSchema) :
-		logger.error('Problem with API URL - '
+		reportError('Problem with API URL - '
 				'Is it entered correctly?\nTerminating.\n')
-		exit()
 	except (exceptions.Timeout) :
-		logger.error('Request timed out.\nTerminating.\n')
-		exit()
+		reportError('Request timed out.\nTerminating.\n')
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
 	logResponse('Verify Token "%s" (HTTP PUT)' %(TOKEN),
@@ -159,7 +151,6 @@ def verifyToken(USERNAME,PASSWORD,URL,CLIENT_ID,CLIENT_IP,TOKEN) :
 
 # revoke token
 def revokeToken(USERNAME,PASSWORD,URL,TOKEN) :
-	logger.info('REVOKING TOKEN "%s"' %TOKEN)
 	request_json = {
 		'username' : USERNAME,
     		'password' : PASSWORD,
@@ -176,12 +167,10 @@ def revokeToken(USERNAME,PASSWORD,URL,TOKEN) :
 	except (exceptions.ConnectionError,
 		exceptions.HTTPError,
 		exceptions.MissingSchema) :
-		logger.error('Problem with API URL - '
+		reportError('Problem with API URL - '
 				'Is it entered correctly?\nTerminating.\n')
-		exit()
 	except (exceptions.Timeout) :
-		logger.error('Request timed out.\nTerminating.\n')
-		exit()
+		reportError('Request timed out.\nTerminating.\n')
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
 	logResponse('Revoke Token %s (HTTP DELETE)' %TOKEN,
@@ -209,6 +198,7 @@ def main() :
 		)
 	# Make appropriate call or print help if action is not valid
 	if action == "issue" :
+		logger.info("ISSUING TOKEN")
 		print issueToken(USERNAME,
 			PASSWORD,
 			URL)
@@ -216,13 +206,13 @@ def main() :
 		TOKEN = env_overwrite.get('token',
 			os.getenv('CG_TOKEN',''))
 		if not TOKEN :
-			logger.error('No valid CG_TOKEN given\n')
-			exit()
+			reportError('No valid CG_TOKEN given\n')
 		if action == "verify" :
 			CLIENT_ID = env_overwrite.get('clientid', 
 				os.getenv('CG_CLIENT_ID',''))
 			CLIENT_IP = env_overwrite.get('clientip', 
 				os.getenv('CG_CLIENT_IP',''))
+			logger.info('VERIFYING TOKEN "%s"' %TOKEN)
 			verifyToken(USERNAME,
 				PASSWORD,
 				URL,
@@ -230,6 +220,7 @@ def main() :
 				CLIENT_IP,
 				TOKEN)
 		elif action == "revoke" :
+			logger.info('REVOKING TOKEN "%s"' %TOKEN)
 			revokeToken(USERNAME,
 				PASSWORD,
 				URL,

@@ -7,6 +7,15 @@ import urlparse
 
 logger = logging.getLogger('CG LOGGER')
 
+# since logger.error() will be followed by a logging.FileHandler.close() and an exit()
+# this function helps there be less syntax with repeated use
+def reportError(message) :
+	# Print to stderr and log error message and timestamp
+	logger.error(message)
+	# Close file associated with the file handler and exit
+	logger.handlers[1].close()
+	exit()
+
 # Initializes logger (defines what is written where and if log file clears)
 def logger_initialize(verbose,debug,clear) :
 	logging_format = ("\n%(levelname)s - %(asctime)s\n%(message)s")
