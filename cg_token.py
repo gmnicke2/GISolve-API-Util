@@ -66,7 +66,7 @@ def parseArgs() :
 		os.environ['CG_API_URL'] += '/'
 	elif not os.getenv('CG_API_URL','') :
 		reportError('CG_API_URL (API URL for REST calls)' 
-				'not specified\n')
+				'not specified')
 	# Initialize Logger
 	logger_initialize(args.verbose,args.debug,args.clearlog)
 	return (parser,args,args.action.lower())
@@ -94,9 +94,9 @@ def issueToken(USERNAME,PASSWORD,URL) :
 		exceptions.HTTPError, 
 		exceptions.MissingSchema) :
 		reportError('Problem with API URL - ' 
-				'Is it entered correctly?\nTerminating.\n')
+				'Is it entered correctly?')
 	except (exceptions.Timeout) :
-		reportError('Request timed out.\nTerminating.\n')
+		reportError('Request timed out.')
 	# Get the response from the REST POST in JSON format
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
@@ -135,9 +135,9 @@ def verifyToken(USERNAME,PASSWORD,URL,CLIENT_ID,CLIENT_IP,TOKEN) :
 		exceptions.HTTPError,
 		exceptions.MissingSchema) :
 		reportError('Problem with API URL - '
-				'Is it entered correctly?\nTerminating.\n')
+				'Is it entered correctly?')
 	except (exceptions.Timeout) :
-		reportError('Request timed out.\nTerminating.\n')
+		reportError('Request timed out.')
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
 	logResponse('Verify Token "%s" (HTTP PUT)' %(TOKEN),
@@ -168,9 +168,9 @@ def revokeToken(USERNAME,PASSWORD,URL,TOKEN) :
 		exceptions.HTTPError,
 		exceptions.MissingSchema) :
 		reportError('Problem with API URL - '
-				'Is it entered correctly?\nTerminating.\n')
+				'Is it entered correctly?')
 	except (exceptions.Timeout) :
-		reportError('Request timed out.\nTerminating.\n')
+		reportError('Request timed out.')
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
 	logResponse('Revoke Token %s (HTTP DELETE)' %TOKEN,
@@ -206,7 +206,7 @@ def main() :
 		TOKEN = env_overwrite.get('token',
 			os.getenv('CG_TOKEN',''))
 		if not TOKEN :
-			reportError('No valid CG_TOKEN given\n')
+			reportError('No valid CG_TOKEN given')
 		if action == "verify" :
 			CLIENT_ID = env_overwrite.get('clientid', 
 				os.getenv('CG_CLIENT_ID',''))
@@ -228,5 +228,7 @@ def main() :
 		else :
 			parser.print_help()
 			exit()
+	logger.handlers[1].flush()
+	logger.handlers[1].close()
 
 main()

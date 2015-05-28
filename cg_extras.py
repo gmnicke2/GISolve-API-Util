@@ -12,9 +12,10 @@ logger = logging.getLogger('CG LOGGER')
 def reportError(message) :
 	# Print to stderr and log error message and timestamp
 	logger.error(message)
-	# Close file associated with the file handler and exit
+	# Close file associated with the file handler
 	logger.handlers[1].close()
-	exit()
+	# Exit with error
+	sys.exit(1)
 
 # Initializes logger (defines what is written where and if log file clears)
 def logger_initialize(verbose,debug,clear) :
@@ -62,7 +63,7 @@ def check_for_response_errors(response_json) :
 	try :
 		status = response_json['status']
 	except KeyError :
-		logger.error("\nResponse JSON failed to create.\n")
+		logger.error("\nResponse JSON failed to create.")
 		exit()
 	logger.info("Response JSON created successfully")
 	if(status != 'success') :
