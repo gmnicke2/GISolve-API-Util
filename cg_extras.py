@@ -60,12 +60,13 @@ def logResponse(request_type, request_json, response_json, url) :
 
 # checks for errors in response and prints necessary info to stderr
 def check_for_response_errors(response_json) :
+	logger.debug("Checking for errors from server's response")
 	try :
 		status = response_json['status']
 	except KeyError :
 		logger.error("\nResponse JSON failed to create.")
 		exit()
-	logger.info("Response JSON created successfully")
+	logger.debug("Response JSON created successfully")
 	if(status != 'success') :
 		logger.error("Request Failed")
 		logger.error("Error %d: %s" 
@@ -73,10 +74,11 @@ def check_for_response_errors(response_json) :
 			response_json['result']['message'])
 			)
 		exit()
-	logger.info('Response JSON indicates "success"')
+	logger.debug('Response JSON indicates "success"')
 
 # makes sure URL passes some tests (mostly if dealing with url as an IP)
 def check_url_validity(url) :
+	logger.debug('Testing URL host name validity')
 	host_name = urlparse.urlparse(url).hostname
 	# make sure host name isn't localhost
 	if host_name == 'localhost' :
@@ -91,5 +93,5 @@ def check_url_validity(url) :
 		if ip_addr.is_loopback or ip_addr.is_reserved or ip_addr.is_private :
 			logger.error('"' + url + '" is an invalid URL')
 			exit()
-	logger.info('URL passed host name tests')
+	logger.debug('URL passed host name tests')
 
