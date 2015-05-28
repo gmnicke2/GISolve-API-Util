@@ -59,14 +59,18 @@ def parseArgs() :
 	# Initialize Logger
 	logger_initialize(args.verbose,args.debug,args.clearlog)
 	# Append a terminating '/' if non-existent in API url
-	if env_overwrite.get('url','') and not env_overwrite.get('url','').endswith('/') :
+	if (env_overwrite.get('url','')
+		and not env_overwrite.get('url','').endswith('/')
+	   ) :
 		env_overwrite['url'] += '/'
-	elif os.getenv('CG_API_URL','') and not os.getenv('CG_API_URL','').endswith('/') :
+	elif (os.getenv('CG_API_URL','')
+		and not os.getenv('CG_API_URL','').endswith('/')
+	     ) :
 		os.environ['CG_API_URL'] += '/'
-	elif not os.getenv('CG_API_URL','') :
+	elif (not os.getenv('CG_API_URL','')) :
 		reportError('CG_API_URL (API url for REST calls) '
 				'not specified\n')
-	if not env_overwrite.get('appname',os.getenv('CG_APP_NAME','')) :
+	if (not env_overwrite.get('appname',os.getenv('CG_APP_NAME',''))) :
 		reportError('No CG_APP_NAME found or '
 				'command line argument specified')
 	return (parser,args,args.action.lower())
@@ -81,7 +85,8 @@ def registerApp(username,appname,url,token) :
 		'longname' : 'Test app by %s' % username,
 		'version' : 'V0.1',
 		'info' : '<h2>%s</h2><p>Description of App (%s) '
-				'Goes Here</p><p>Author: %s</p>' % (appname,appname,username),
+			'Goes Here</p><p>'
+			'Author: %s</p>' % (appname,appname,username),
 		'author' : username,
 		'tags' : 'test, app, %s' % username
 	}

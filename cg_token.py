@@ -62,11 +62,15 @@ def parseArgs() :
 	# Initialize Logger
 	logger_initialize(args.verbose,args.debug,args.clearlog)
 	# Append a terminating '/' if non-existent in API url
-	if env_overwrite.get('url','') and not env_overwrite.get('url','').endswith('/') :
+	if (env_overwrite.get('url','') 
+		and not env_overwrite.get('url','').endswith('/') 
+	   ) :
 		env_overwrite['url'] += '/'
-	elif os.getenv('CG_API_URL','') and not os.getenv('CG_API_URL','').endswith('/') :
+	elif (os.getenv('CG_API_URL','') 
+		and not os.getenv('CG_API_URL','').endswith('/')
+	     ) :
 		os.environ['CG_API_URL'] += '/'
-	elif not os.getenv('CG_API_URL','') :
+	elif (not os.getenv('CG_API_URL','')) :
 		reportError('CG_API_URL (API url for REST calls)' 
 				'not specified')
 	return (parser,args,args.action.lower())
@@ -126,6 +130,7 @@ def verifyToken(username,password,url,client_id,client_ip,token) :
 	# Set HTTP Header
 	headers = {'Content-Length' : request_length}
 	try :
+		# Make RESTful PUT call
 		request_ret = requests.put(url,
 			data=request_json,
 			headers=headers,

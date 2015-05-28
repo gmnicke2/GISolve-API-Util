@@ -7,8 +7,9 @@ import urlparse
 
 logger = logging.getLogger('CG LOGGER')
 
-# since logger.error() will be followed by a logging.FileHandler.close() and an exit()
-# this function helps there be less syntax with repeated use
+# Since logger.error() will be followed by a 
+# logging.FileHandler.close() and an exit(),
+# this function helps there be less syntax with more indirection
 def reportError(message) :
 	# Print to stderr and log error message and timestamp
 	logger.error(message)
@@ -55,8 +56,10 @@ def logResponse(request_type, request_json, response_json, url) :
 	request_json['password'] = '*******'
 	logger.debug("URL: " + url)
 	logger.debug("Request: " + request_type)
-	logger.debug("Request Data (in JSON format): " + json.dumps(request_json,indent=4,separators=(',', ': ')))
-	logger.debug("Response (in JSON format): " + json.dumps(response_json,indent=4,separators=(',', ': ')))
+	logger.debug("Request Data (in JSON format)"
+		": " + json.dumps(request_json,indent=4,separators=(',',': ')))
+	logger.debug("Response (in JSON format)"
+		": " + json.dumps(response_json,indent=4,separators=(',',': ')))
 
 # checks for errors in response and prints necessary info to stderr
 def check_for_response_errors(response_json) :
@@ -64,16 +67,14 @@ def check_for_response_errors(response_json) :
 	try :
 		status = response_json['status']
 	except KeyError :
-		logger.error("\nResponse JSON failed to create.")
-		exit()
+		reportError("\nResponse JSON failed to create.")
 	logger.debug("Response JSON created successfully")
 	if(status != 'success') :
-		logger.error("Request Failed")
-		logger.error("Error %d: %s" 
+		reportError('Request Failed\n'
+			'Error %d: "%s"' 
 			%(response_json['result']['error_code'],
 			response_json['result']['message'])
 			)
-		exit()
 	logger.debug('Response JSON indicates "success"')
 
 # makes sure URL passes some tests (mostly if dealing with url as an IP)
@@ -90,7 +91,10 @@ def check_url_validity(url) :
 	except ValueError :
 		pass
 	else :
-		if ip_addr.is_loopback or ip_addr.is_reserved or ip_addr.is_private :
+		if (ip_addr.is_loopback 
+			or ip_addr.is_reserved
+			or ip_addr.is_private
+		   ) :
 			logger.error('"' + url + '" is an invalid URL')
 			exit()
 	logger.debug('URL passed host name tests')
