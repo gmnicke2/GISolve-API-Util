@@ -1,20 +1,19 @@
 #!/bin/bash
-T="python cg_token.py -act"
-A="python cg_app.py -act"
+A="python cg_app.py"
 rm *.pyc get*
-export CG_TOKEN=`$T issue -d --clearlog`
-export CG_TOKEN=`$T issue -d`
+export CG_TOKEN=`$A issue -d`
+export CG_TOKEN=`$A issue -d`
 echo VERIFYING WITH INVALID CONSUMER ID
-$T verify -d
+$A verify -d
 echo
 echo USING NONEXISTENT USERNAME
-$T revoke -u nonexistent -d
+$A revoke -u nonexistent -d
 echo
 echo USING FAULTY URL
-$T revoke -r https://wrong.url/ -d
+$A revoke -r https://wrong.url/ -d
 echo
-$T revoke -d
-export CG_TOKEN=`$T issue -d`
+$A revoke -d
+export CG_TOKEN=`$A issue -d`
 export CG_APP_NAME=`$A register --appname="TESTAPP" -d`
 echo USING NONEXISTENT CONFIG PATH
 $A configure -cf nonexistentpath -d
