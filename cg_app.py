@@ -6,7 +6,7 @@ from cg_extras import *
 import json
 import argparse
 import requests
-from requests import exceptions
+from requests import exceptions as rex
 import os, sys, logging
 
 # Used to disable InsecureRequestWarning that occurs with this API

@@ -6,7 +6,7 @@ import json
 import os, sys, logging
 import argparse
 import requests
-from requests import exceptions
+from requests import exceptions as rex
 import getpass
 
 # Used to disable InsecureRequestWarning that occurs with this API
@@ -94,12 +94,12 @@ def issueToken(username,password,url) :
 			data=request_json,
 			timeout=50,
 			verify=False)
-	except (exceptions.ConnectionError, 
-		exceptions.HTTPError, 
-		exceptions.MissingSchema) :
+	except (rex.ConnectionError, 
+		rex.HTTPError, 
+		rex.MissingSchema) :
 		reportError('Problem with API url - ' 
 				'Is it entered correctly?')
-	except (exceptions.Timeout) :
+	except (rex.Timeout) :
 		reportError('Request timed out.')
 	# Get the response from the REST POST in JSON format
 	response_json = request_ret.json()
@@ -136,12 +136,12 @@ def verifyToken(username,password,url,client_id,client_ip,token) :
 			headers=headers,
 			timeout=50,
 			verify=False)
-	except (exceptions.ConnectionError,
-		exceptions.HTTPError,
-		exceptions.MissingSchema) :
+	except (rex.ConnectionError,
+		rex.HTTPError,
+		rex.MissingSchema) :
 		reportError('Problem with API url - '
 				'Is it entered correctly?')
-	except (exceptions.Timeout) :
+	except (rex.Timeout) :
 		reportError('Request timed out.')
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
@@ -169,12 +169,12 @@ def revokeToken(username,password,url,token) :
 			params=request_json,
 			timeout=50,
 			verify=False)
-	except (exceptions.ConnectionError,
-		exceptions.HTTPError,
-		exceptions.MissingSchema) :
+	except (rex.ConnectionError,
+		rex.HTTPError,
+		rex.MissingSchema) :
 		reportError('Problem with API url - '
 				'Is it entered correctly?')
-	except (exceptions.Timeout) :
+	except (rex.Timeout) :
 		reportError('Request timed out.')
 	response_json = request_ret.json()
 	check_for_response_errors(response_json)
