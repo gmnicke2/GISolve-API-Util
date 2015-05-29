@@ -101,12 +101,12 @@ def registerApp(username,appname,url,token) :
 			data=request_json,
 			timeout=50,
 			verify=False)
-	except (exceptions.ConnectionError,
-		exceptions.HTTPError,
-		exceptions.MissingSchema) :
+	except (rex.ConnectionError,
+		rex.HTTPError,
+		rex.MissingSchema) :
 		reportError('Problem with API url - '
 				'Is it entered correctly?')
-	except (exceptions.Timeout) :
+	except (rex.Timeout) :
 		reportError('Request timed out.')
 	# Get the response from the REST POST in JSON format
 	response_json = request_ret.json()
@@ -140,12 +140,12 @@ def getAppInfo(username,appname,url,token,dest_filename) :
 			params=request_json,
 			timeout=50,
 			verify=False)
-	except (exceptions.ConnectionError,
-		exceptions.HTTPError,
-		exceptions.MissingSchema) :
+	except (rex.ConnectionError,
+		rex.HTTPError,
+		rex.MissingSchema) :
 		reportError('Problem with API url - '
 				'Is it entered correctly?')
-	except (exceptions.Timeout) :
+	except (rex.Timeout) :
 		reportError('Request timed out.')
 	# Get the response from the REST GET in JSON format (will be written to dest file)
 	response_json = request_ret.json()
@@ -191,12 +191,12 @@ def configApp(username,appname,url,token,config_filename) :
 			data=request_json,
 			timeout=50,
 			verify=False)
-	except (exceptions.ConnectionError,
-		exceptions.HTTPError,
-		exceptions.MissingSchema) :
+	except (rex.ConnectionError,
+		rex.HTTPError,
+		rex.MissingSchema) :
 		reportError('Problem with API url - '
 				'Is it entered correctly?')
-	except (exceptions.Timeout) :
+	except (rex.Timeout) :
 		reportError('Request timed out.')
 	# Get the response from the REST POST in JSON format
 	response_json = request_ret.json()
@@ -226,12 +226,12 @@ def getAppConfig(username,appname,url,token,dest_filename) :
 			params=request_json,
 			timeout=50, 
 			verify=False)
-	except (exceptions.ConnectionError,
-		exceptions.HTTPError,
-		exceptions.MissingSchema) :
+	except (rex.ConnectionError,
+		rex.HTTPError,
+		rex.MissingSchema) :
 		reportError('Problem with API url - '
 				'Is it entered correctly?')
-	except (exceptions.Timeout) :
+	except (rex.Timeout) :
 		reportError('Request timed out.')
 	# Get the response from the REST GET in JSON format (will be written to dest file)
 	response_json = request_ret.json()
