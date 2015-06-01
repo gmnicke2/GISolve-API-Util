@@ -285,7 +285,7 @@ def main() :
                 sys.exit(1)
 
     except CGException as e :
-        logger.error('Error %d: %s' %(e.error_code, e.message))
+        logger.error(e)
         sys.exit(1)
 
 if (__name__ == ("__main__")) :
