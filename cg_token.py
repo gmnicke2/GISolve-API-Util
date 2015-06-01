@@ -148,20 +148,16 @@ def cg_rest(method, endpoint, **kwargs) :
     messages when errors occur. Exceptions are passed to the calling
     function for final resolution.
     
-    Parameters to be passed may be provided as keyword arguments or by passing
-    a dictionary using the ** notation. For example:
-    
-        cg_rest('POST', <url>, username=<username>, password=<password>, ...)
+        cg_rest('POST', <url>, data=request)
         
-            or
+            or with additional HTTP arguments
         
-        cg_rest('POST', <url>, **params)
+        cg_rest('POST', <url>, headers=headers, data=request)
 
     Args:
         method (str): the HTTP method that will be called
         endpoint (str, URL): the REST endpoint
-        kwargs (optional): common keyword include username, password,
-            token, etc.
+        kwargs (optional): data/params json dicts, header dicts, etc.
 
     Returns:
         (dict): decodes the response and returns it as a dictionary
