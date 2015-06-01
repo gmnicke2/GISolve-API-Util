@@ -33,8 +33,9 @@ Verify or Revoke Token:
     Verify uses CG_CLIENT_ID and CG_CLIENT_IP for consumer ID & user client IP,
     Revoke uses CG_USERNAME and CG_PASSWORD for security purposes :
 
-        # Verify token, overriding CG_CLIENT_ID and CG_CLIENT_IP with command line
-        # (Upon success, it will print the remaining lifetime of the token in seconds)
+        # Verify token, overriding CG_CLIENT_ID and CG_CLIENT_IP with command
+        # line (Upon success, it will print the remaining lifetime of the token
+        # in seconds)
         ./cg_token.py verify --clientid <ID> --clientip <IP>
 
         # Revoke token, overriding CG_TOKEN with command line
@@ -75,10 +76,9 @@ def logger_initialize(debug) :
         logging.basicConfig(format=_format,
                             level=logging.WARNING)
 
-def log_response(method, url, response, **kwargs) :
+def log_response(method, url, response, request) :
     """Logs request and response when in debug mode"""
 
-    request = kwargs.get('data',kwargs.get('params',None))
     if request.get('password', '') :
         request['password'] = '*******'
     logger.debug("URL: " + url)
@@ -88,7 +88,7 @@ def log_response(method, url, response, **kwargs) :
     logger.debug("Response (in JSON format)"
         ": " + json.dumps(response,indent=4,separators=(',',': ')))
 
-def parseArgs() :
+def parse_args() :
     """Defines command line positional and optional arguments and checks
         for valid action input if present. Additionally prompts with getpass
         if user specifies "--password -" to override CG_PASSWORD
@@ -104,19 +104,25 @@ def parseArgs() :
     parser.add_argument("-d", "--debug",
         action="store_true",
         help='Allow debug info to be written to stderr')
-    parser.add_argument("-e", "--endpoint", 
+    parser.add_argument("-e", "--endpoint",
+        default=os.getenv('CG_API',''), 
         help="Set API url")
     parser.add_argument("-p", "--password",
+        default=os.getenv('CG_PASSWORD',''),
         help="Set password. '-' for secure prompting")
     parser.add_argument("-u", "--username", 
+        default=os.getenv('CG_USERNAME',''),
         help="Set Username")
     parser.add_argument("-t", "--token", 
+        default=os.getenv('CG_TOKEN',''),
         help="Set Token for Verify/Revoke")
     parser.add_argument("-c", "--clientid",
+        default=os.getenv('CG_CLIENT_ID',''),
         help="Set Client ID for Verify")
     parser.add_argument("-i", "--clientip",
+        default=os.getenv('CG_CLIENT_IP',''),
         help="Set Client IP for Verify")
-    parser.add_argument("action", nargs='?', type=str,
+    parser.add_argument("action", nargs='?', type=str, default='issue',
         help='issue/verify/revoke')
 
     args = parser.parse_args()
@@ -126,22 +132,18 @@ def parseArgs() :
     if args.password and args.password == '-' : 
         args.password = getpass.getpass("Enter desired CG Password: ")
 
-    if (not args.endpoint and not os.getenv('CG_API','')) :
+    if not args.endpoint :    
         logger.error('CG_API (API url for REST calls) '
                 'not specified\n')
         sys.exit(1)
 
-    if (not args.action) :
-        action = "issue"
-    else :
-        action = args.action.lower()
-    if action not in ['issue','verify','revoke'] :
-        logger.error('Incorrect Action')
+    if args.action.lower() not in ['issue','verify','revoke'] :
+        logger.error('Invalid Action')
         sys.exit(1) 
 
-    return (args,action)
+    return (args,args.action.lower())
 
-def cg_rest(method, endpoint, **kwargs) :
+def cg_rest(method, endpoint, headers={}, **kwargs) :
     """Calls the CG REST endpoint passing keyword arguments given.
 
     'cg_rest' provides a basic wrapper around the HTTP request to
@@ -149,16 +151,22 @@ def cg_rest(method, endpoint, **kwargs) :
     messages when errors occur. Exceptions are passed to the calling
     function for final resolution.
     
-        cg_rest('POST', <url>, data=request)
+        cg_rest('POST', <url>, headers=<HTTP headers dict>, username=<username>, 
+password=<password>, ...)
         
-            or with additional HTTP arguments
+            or with a previously constructed data/params dict
         
-        cg_rest('POST', <url>, headers=headers, data=request)
+        cg_rest('POST', <url>, headers=headers, **data/params)
+
+            or with no header necessary
+
+        cg_rest('POST', <url>, **data/params)
 
     Args:
         method (str): the HTTP method that will be called
         endpoint (str, URL): the REST endpoint
-        kwargs (optional): data/params dicts, header dicts, etc.
+        headers (dict, optional): HTTP headers
+        kwargs (optional): common keywords include username, password, etc.
 
     Returns:
         (dict): decodes the response and returns it as a dictionary
@@ -170,8 +178,12 @@ def cg_rest(method, endpoint, **kwargs) :
         a complete list.
     """ 
     try :
-        r = requests.request(method.upper(), endpoint, timeout=50, 
-                            verify=False, **kwargs)
+        if method.upper() == 'POST' or method.upper() == 'PUT' :
+            r = requests.request(method.upper(), endpoint, timeout=50, 
+                                verify=False, headers=headers, data=kwargs)
+        else : # must be 'GET' or 'DELETE'
+            r = requests.request(method.upper(), endpoint, timeout=50,
+                                verify=False, headers=headers, params=kwargs)
         r.raise_for_status()
     
     except (rex.ConnectionError, rex.HTTPError, rex.MissingSchema) as e :
@@ -185,7 +197,7 @@ def cg_rest(method, endpoint, **kwargs) :
         raise
 
     response = r.json()
-    log_response(method, endpoint, response, **kwargs)
+    log_response(method, endpoint, response, kwargs)
 
     # If status is not provided, default to error.
     if response.get('status','error') == 'error' :
@@ -194,8 +206,7 @@ def cg_rest(method, endpoint, **kwargs) :
 
     return response
 
-#issue token
-def issueToken(endpoint, username, password, lifetime=15*3600, binding=1) :
+def issue_token(endpoint, username, password, lifetime=15*3600, binding=1) :
     """Calls the Gateway issueToken function and returns token.
 
     Args:
@@ -213,7 +224,7 @@ def issueToken(endpoint, username, password, lifetime=15*3600, binding=1) :
         Passes any exceptions raised in cg_rest.
     """
 
-    request = {
+    data = {
         'username' : username,
         'password' : password,
         'lifetime' : lifetime,
@@ -223,19 +234,20 @@ def issueToken(endpoint, username, password, lifetime=15*3600, binding=1) :
     url = endpoint.rstrip('/') + '/token'
     logger.debug('Issuing token from %s' %url)
 
-    response = cg_rest('POST', url, data=request)
+    response = cg_rest('POST', url, **data)
 
     return response['result']['token']
 
-def verifyToken(endpoint, token, client_id, client_ip) :
+def verify_token(endpoint, username, token, client_id, client_ip) :
     """Calls the Gateway verifyToken function, returns remaining token lifetime.
 
     Args:
         endpoint(string, URL): the REST endpoint
+        username (string):     
+        token (string): Token to verify
         client_id (string): Consumer ID
         client_ip (string): User Client's IP Address
-        token (string): Token to verify
-    
+
     Returns:
         (int): Remaining lifetime of token (in seconds)
 
@@ -243,22 +255,23 @@ def verifyToken(endpoint, token, client_id, client_ip) :
         Passes any exceptions raised in cg_rest.
     """
 
-    request = {
+    data = {
+        'token' : token,
         'consumer' : client_id,
         'remote_addr' : client_ip,
-        'token' : token
+        'username' : username
     }
 
     url = endpoint.rstrip('/') + '/token'
     logger.debug("Verifying token '%s' from '%s'" %(token,url))
-    request_length = str(len(json.dumps(request)))
-    headers = {'Content-Length' : request_length}
+    data_length = str(len(json.dumps(data)))
+    headers = {'Content-Length' : data_length}
 
-    response = cg_rest('PUT', url, headers=headers, data=request) 
+    response = cg_rest('PUT', url, headers=headers, **data) 
 
     return response['result']['lifetime']
 
-def revokeToken(endpoint, username, password, token) :
+def revoke_token(endpoint, username, password, token) :
     """Calls the Gateway revokeToken function
 
     Args:
@@ -273,42 +286,35 @@ def revokeToken(endpoint, username, password, token) :
         Passes any exceptions raised in cg_rest.
     """
 
-    request= {
+    params = {
+        'token' : token,
         'username' : username,
         'password' : password,
-        'token' : token
     }
-
     url = endpoint.rstrip('/') + "/token"
     logger.debug("Revoking token '%s' from '%s'" %(token,url))
 
-    response = cg_rest('DELETE', url, params=request)
+    response = cg_rest('DELETE', url, **params)
 
 def main() :
-    (args, action) = parseArgs()
-    username = args.username if args.username else os.getenv('CG_USERNAME','')
-    password = args.password if args.password else os.getenv('CG_PASSWORD','')
-    endpoint = args.endpoint if args.endpoint else os.getenv('CG_API','')
-
+    (args, action) = parse_args()
+    
     try :
         if action == "issue" :
-            print issueToken(endpoint, username, password)
+            print issue_token(args.endpoint, args.username, args.password)
 
         else :
-            token = args.token if args.token else os.getenv('CG_TOKEN','')
-            if not token :
+            if not args.token :
                 logger.error('No valid CG_TOKEN given')
                 sys.exit(1)
 
             if action == "verify" :
-                client_id = args.clientid if args.clientid else os.getenv(''
-                                                           'CG_CLIENT_ID','')
-                client_ip = args.clientip if args.clientip else os.getenv(''
-                                                        'CG_CLIENT_IP','')
-                print verifyToken(endpoint, token, client_id, client_ip)
+                print verify_token(args.endpoint, args.username, 
+                                    args.token, args.clientid, args.clientip)
 
             else :
-                revokeToken(endpoint, username, password, token)
+                revoke_token(args.endpoint, args.username, 
+                            args.password, args.token)
 
     except CGException as e :
         logger.error(e)
