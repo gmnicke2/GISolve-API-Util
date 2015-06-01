@@ -24,11 +24,14 @@ Issue Token:
         export CG_TOKEN=`./cg_token.py --username <login> --endpoint <newurl>`
 
 Verify or Revoke Token:
-    Token verifying requires the positional 'verify' command line argument.
+    Verifying or Revoking requires the positional 'verify' or 'revoke' 
+    command line argument.
+
     User can still override env variables with command-line arguments.
 
-    Uses CG_USERNAME, CG_PASSWORD, CG_API, and CG_TOKEN env variables for both.
-    Verify uses CG_CLIENT_ID and CG_CLIENT_IP for consumer ID & user client IP:
+    Uses CG_API, and CG_TOKEN env variables for both.
+    Verify uses CG_CLIENT_ID and CG_CLIENT_IP for consumer ID & user client IP,
+    Revoke uses CG_USERNAME and CG_PASSWORD for security purposes :
 
         # Verify token, overriding CG_CLIENT_ID and CG_CLIENT_IP with command line
         # (Upon success, it will print the remaining lifetime of the token in seconds)
