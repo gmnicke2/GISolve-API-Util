@@ -96,7 +96,7 @@ def parseArgs() :
     Returns: A (tuple) containing the following:
         parser (object) : used to print help when necessary
         args (namespace) : used to overwrite env variables when necessary
-        action.lower() (string) : for main to use as a switch for calls
+        action (string) : for main to use as a switch for calls to perform
     """
 
     parser = argparse.ArgumentParser()
