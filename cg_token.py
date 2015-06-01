@@ -94,7 +94,6 @@ def parseArgs() :
     Args: none
 
     Returns: A (tuple) containing the following:
-        parser (object) : used to print help when necessary
         args (namespace) : used to overwrite env variables when necessary
         action (string) : for main to use as a switch for calls to perform
     """
@@ -138,7 +137,7 @@ def parseArgs() :
         logger.error('Incorrect Action')
         sys.exit(1) 
 
-    return (parser,args,action)
+    return (args,action)
 
 def cg_rest(method, endpoint, **kwargs) :
     """Calls the CG REST endpoint passing keyword arguments given.
@@ -284,7 +283,7 @@ def revokeToken(endpoint, username, password, token) :
     response = cg_rest('DELETE', url, params=request)
 
 def main() :
-    (parser, args, action) = parseArgs()
+    (args, action) = parseArgs()
     username = args.username if args.username else os.getenv('CG_USERNAME','')
     password = args.password if args.password else os.getenv('CG_PASSWORD','')
     endpoint = args.endpoint if args.endpoint else os.getenv('CG_API','')
