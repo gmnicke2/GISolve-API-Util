@@ -158,7 +158,7 @@ def cg_rest(method, endpoint, **kwargs) :
     Args:
         method (str): the HTTP method that will be called
         endpoint (str, URL): the REST endpoint
-        kwargs (optional): data/params json dicts, header dicts, etc.
+        kwargs (optional): data/params dicts, header dicts, etc.
 
     Returns:
         (dict): decodes the response and returns it as a dictionary
@@ -170,8 +170,8 @@ def cg_rest(method, endpoint, **kwargs) :
         a complete list.
     """ 
     try :
-        r = requests.request(method.upper(),endpoint,timeout=50, verify=False,
-                            **kwargs)
+        r = requests.request(method.upper(), endpoint, timeout=50, 
+                            verify=False, **kwargs)
         r.raise_for_status()
     
     except (rex.ConnectionError, rex.HTTPError, rex.MissingSchema) as e :
@@ -227,7 +227,7 @@ def issueToken(endpoint, username, password, lifetime=15*3600, binding=1) :
 
     return response['result']['token']
 
-def verifyToken(endpoint, client_id, client_ip, token) :
+def verifyToken(endpoint, token, client_id, client_ip) :
     """Calls the Gateway verifyToken function, returns remaining token lifetime.
 
     Args:
@@ -305,7 +305,7 @@ def main() :
                                                            'CG_CLIENT_ID','')
                 client_ip = args.clientip if args.clientip else os.getenv(''
                                                         'CG_CLIENT_IP','')
-                print verifyToken(endpoint, client_id, client_ip, token)
+                print verifyToken(endpoint, token, client_id, client_ip)
 
             else :
                 revokeToken(endpoint, username, password, token)
