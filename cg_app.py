@@ -107,7 +107,7 @@ def register_app(endpoint, username, appname, token) :
     data = {
         'token' : token,
         'app' : appname,
-        'longname' : 'Test app by %s' % username,
+        'longname' : appname + ' by %s' % username,
         'version' : 'V0.1',
         'info' : '<h2>%s</h2><p>Description of App (%s) '
             'Goes Here</p><p>'
