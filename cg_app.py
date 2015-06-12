@@ -18,10 +18,10 @@ Configure App from file "config.json" and print debug information to stderr:
 
 Get App Info and Config and write to respective JSON files:
     # Get App Info of a different app than CG_APP_NAME
-    ./cg_app getinfo --appname Other_App --destfile getinfo_out.json
+    ./cg_app.py getinfo --appname Other_App --destfile getinfo_out.json
 
     # Get Config of app stored in CG_APP_NAME
-    ./cg_app getconfig --destfile getconfig_out.json
+    ./cg_app.py getconfig --destfile getconfig_out.json
 """
 
 from cg_token import CGException, log_response, cg_rest, logger_initialize
@@ -68,7 +68,7 @@ def parse_args() :
         help="For action 'configure' config file in JSON format")
     parser.add_argument("-df","--destfile", 
         help="For actions 'getinfo' and 'getconfig' "
-            "destination file to write response")
+            "destination file path to write response")
     parser.add_argument("action", nargs='?', type=str, default='register',
         help="register/configure/getinfo/getconfig")
 
@@ -89,7 +89,7 @@ def parse_args() :
     return (args,args.action.lower())
 
 def register_app(endpoint, username, appname, token) :
-    """Calls the Gateway register_application function and returns the app name
+    """Calls the Gateway Register Application function and returns the app name
 
     Args:
         endpoint (string, URL): the REST endpoint
@@ -125,7 +125,8 @@ def register_app(endpoint, username, appname, token) :
     return response['result']['app']
 
 def get_app_info(endpoint, appname, token, dest_filename) :
-    """Calls the Gateway Get App Information function
+    """Calls the Gateway Get App Information function and
+    writes the Information to the destination file
     
     Args:
         endpoint (string,  URL): the REST endpoint
@@ -199,7 +200,8 @@ def config_app(endpoint, appname, token, config_filename) :
             'config file "%s"' %(appname,config_filename))
 
 def get_app_config(endpoint, appname, token, dest_filename) :
-    """Calls the Gateway Get App Configuration function
+    """Calls the Gateway Get App Configuration function and writes
+    the configuration to the destination file
     
     Args:
         endpoint (string,  URL): the REST endpoint

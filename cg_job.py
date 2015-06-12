@@ -1,154 +1,279 @@
-#Set of utilities to launch, monitor, and get the output of a job
-#Valid token and registered app are requireed
-#Monitoring and getting the output of a job requires job ID 
+#!/usr/bin/env python
 
-from cg_extras import *
+"""
+Set of utilities to:
+	Launch a Job with a configuration file in JSON format
+	Monitor a Job and write the response JDON to a destination file
+	Get the Job Output of a Job and print the output archive HTTP URL
+
+All calls require a valid token either from CG_TOKEN or command line --token
+
+Launch Job:
+	# launch a job with name "My_Job" and store the ID to CG_JOB_ID env variables
+	# requires a valid registered app name, either from CG_APP_NAME env variables
+	# or with command line --appname
+	export CG_JOB_ID=`./cg_job.py --jobname My_Job -cf <config file path>`
+
+Monitor a Job:
+	# monitor a job and specify destination file path for the monitor response
+	./cg_job.py monitor -df <dest file path>
+
+Get Job Output:
+	# prints the job output to stdout
+	./cg_job.py output
+"""
+
+from cg_token import CGException, log_response, cg_rest, logger_initialize
 import json
 import argparse
 import requests
-from requests import exceptions
-import os, sys
+import os, sys, logging
 
 # Used to disable InsecureRequestWarning that occurs with this API
 requests.packages.urllib3.disable_warnings()
 
-# any argument used to overwrite environ vars is stored here;
-# it is accessed throughout the code with the format:
-# env_overwrite.get(<KEY>,<If KEY doesn't exist use environ or its default -- usually ''>)
-# this allows for keys that don't exist / have no entries to always
-# evaluate to False for error handling as well as keep the code succinct
-env_overwrite = {}
+logger = logging.getLogger(__name__)
 
-# parses command line arguments (gives help if done incorrectly)
-def parseArgs() :
-	verbose = False
-	parser = argparse.ArgumentParser()
-	parser.add_argument("-v", "--verbose",
-		action="store_true", 
-		help="Print results/errors to stdout")
-	parser.add_argument("-act", "--action", 
-		help="(REQUIRED) launch/monitor/output")
-	parser.add_argument("-r", "--url", 
-		help="Set API URL")
-	parser.add_argument("-j", "--jobname", 
+def parse_args() :
+    """Defines command line positional and optional arguments and checks
+        for valid action input if present.
+        
+    Args: none
+
+    Returns: A (tuple) containing the following:
+        args (namespace) : used to overwrite env variables when necessary
+        action (string) : for main to use as a switch for calls to perform
+    """
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--debug",
+        action="store_true",
+        help='Allow debug info to be written to stderr')
+    parser.add_argument("-j", "--jobname",
+		default=os.getenv('CG_JOB_NAME',''),
 		help="Set Job Name")
-	parser.add_argument("-o", "--owner", 
-		help="Set Job Owner")
-	parser.add_argument("-cf","--configfile", 
-		help="For action 'configure' config file in JSON format")
-	args = parser.parse_args()
-	if not args.action :
-		parser.print_help()
-		exit()
-	os.environ['CG_ACTION'] = args.action
-	if args.verbose :
-		verbose = True
-	# used for OpenService API calls (which make REST calls)
-	for arg in vars(args) :
-		if getattr(args,arg) and arg is not 'verbose':
-			env_overwrite[arg] = getattr(args,arg)
-	# append a terminating '/' if non-existent in API URL
-	if env_overwrite.get('url','') and not env_overwrite.get('url','').endswith('/') :
-		env_overwrite['url'] += '/'
-	elif os.getenv('CG_API_URL','') and not os.getenv('CG_API_URL','').endswith('/') :
-		os.environ['CG_API_URL'] += '/'
-	elif not os.getenv('CG_API_URL','') :
-		sys.stderr.write('CG_API_URL (API URL for REST calls) '
-				'not specified\n')
-		exit()
-	if not env_overwrite.get('jobname',os.getenv('CG_JOB_NAME','')) :
-		sys.stderr.write('No CG_JOB_NAME found or '
-				'command line argument specified\n')
-		exit()
-	return (parser,args,verbose)
+    parser.add_argument("-jid", "--jobid",
+		default=os.getenv('CG_JOB_ID',''),
+		help="Set Job ID")
+    parser.add_argument("-e", "--endpoint",
+        default=os.getenv('CG_API',''),
+        help="Set API url")
+    parser.add_argument("-u", "--username",
+        default=os.getenv('CG_USERNAME',''), 
+        help="Set Username")
+    parser.add_argument("-t", "--token", 
+        default=os.getenv('CG_TOKEN',''),
+        help="Set Token")
+    parser.add_argument("-a", "--appname",
+        default=os.getenv('CG_APP_NAME',''), 
+        help="Set App Name")
+    parser.add_argument("-cf","--configfile", 
+        help="For Job Launch, configuration file in JSON format")
+    parser.add_argument("-n","--ncpu",
+    	type=int,
+    	default=0,
+    	help="For Job Launch specify # of CPUs > 0 to request")
+    parser.add_argument("-wtime", "--walltime",
+    	type=float,
+    	default=0,
+    	help="For Job Launch specify how long (minutes) for job to run")
+    parser.add_argument("-df","--destfile", 
+        help="For Job Monitoring, destination file path to write response")
+    parser.add_argument("action", nargs='?', type=str, default='launch',
+        help="launch/monitor/output")
 
-############################API CALLS##################################
-# Launch a job, must have valid token and appname
-def launchJob(JOBNAME, APPNAME, OWNER, URL, TOKEN, config_filename, verbose) :
-	if(verbose) :
-		print "\nConfig File: \"" + config_filename + "\""
+    args = parser.parse_args()
+
+    logger_initialize(args.debug)
+
+    if not args.endpoint :
+        logger.error('CG_API (API url for REST calls) '
+                'not specified\n')
+        sys.exit(1)
+
+    if args.action.lower() not in ['launch','monitor','output'] :
+        logger.error('Invalid Action')
+        sys.exit(1)
+
+    return (args,args.action.lower())
+
+def launch_job(endpoint, token, jobname, appname,
+			owner, config_filename, computation) :
+	""" Calls the Gateway Launch Job function and returns the Job ID
+
+	Args:
+		endpoint (string, URL): the REST endpoint
+		token (string): a valid token to allow user to manipulate jobs
+		jobname (string): name of the job to launch
+		appname (string): name of the app to launch the job with
+		owner (string): owner of the application
+		config_filename(string, path): Path to job config in JSON format
+		computation (dict, optional): Dictionary possibly containing:
+			ncpu (int): number of CPUs to run the job owner
+			walltime (long): how long the job should run, in minutes
+
+	Returns:
+		(string): Launched Job's ID
+
+	Raise:
+		Passes any exceptions raised in cg_rest.
+	"""
+
+	logger.debug('Job Config File: "' + config_filename + '"')
+
 	f = open(config_filename)
 	config = json.load(f)
 	f.close()
 	if not config :
-		sys.stderr.write("Config File incorrectly formatted. (JSON)\n")
-		return None
+		logger.error("Config File incorrectly formatted.")
+		sys.exit(1)
 
-	# Set up request JSON
-	request_json = {
-		'token' : TOKEN,
-		'name' : JOBNAME,
-		'app' : APPNAME,
-		'owner' : OWNER,
-		'config' : json.dumps(config)
+	data = {
+		'token' : token,
+		'name' : jobname,
+		'app' : appname,
+		'owner' : owner,
+		'config_filename' : config_filename
 	}
 
-	resource = "job"
-	URL += resource
-	check_url_validity(URL)
+	if computation :
+		data['computation'] = computation
 
-	# Job launch is a POST RESTful call
-	try :
-		request_ret = requests.post(URL,
-			data=request_json,
-			timeout=50,
-			verify=False)
-	except (exceptions.ConnectionError, 
-		exceptions.HTTPError, 
-		exceptions.MissingSchema) :
-		sys.stderr.write('Problem with API URL - ' 
-				'Is it entered correctly?\nTerminating.\n')
-		exit()
-	except (exceptions.Timeout) :
-		sys.stderr.write('Request timed out.\nTerminating.\n')
-		exit()
+	url = endpoint.rstrip('/') + '/job'
 
-	#Get the response from the REST POST in JSON format
-	response_json = request_ret.json()
-	check_for_response_errors(response_json)
+	response = cg_rest('POST', url, **data)
+
+	return response['result']['id']
 	
-	try :
-		os.environ['CG_JOB_ID'] = response_json['result']['id']
-	except (TypeError,KeyError) :
-		sys.stderr.write("Job launch failed. (Check your arguments)\n")
-		exit()
-	if(verbose) :
-		printResponse('Job launch (HTTP POST)',
-			request_json,
-			response_json,
-			URL)
-	return os.getenv('CG_JOB_ID','')
+def monitor_job(endpoint, token, job_id, dest_filename) :
+	"""Calls the Gateway Monitor Job function and writes
+	the response to the destination file
 
+	Args:
+		endpoint (string, URL): the REST endpoint
+		token (string): a valid token to allow user to manipulate jobs
+		job_id (string): a valid Job ID to monitor
+		dest_filename (string, path): path to file to write monitor response
+
+	Returns:
+		(void)
+
+	Raises:
+		Passes any exceptions raised in cg_rest
+	"""
+
+	logger.debug('Monitoring job id "%s" and writing'
+				' response to "' + dest_filename + '"')
+
+	params = {
+		'token' : token,
+		'id' : job_id
+	}
+
+	url = endpoint.rstrip('/') + '/job'
+
+	response = cg_rest('GET', url, **params)
+
+	# Dump the response JSON (the job monitor response) into destination file
+	with open(dest_filename, 'w') as outfile :
+		json.dump(response, outfile, indent=4, separators=(',', ': '))
+		outfile.write('\n')
+		outfile.close()
+
+	logger.debug('Monitor of Job ID "%s" successfully '
+				'written to "%s"' %(job_id,dest_filename))
+
+def get_job_output(endpoint, token, job_id) :
+	"""Calls the Gateway Monitor Job function and writes
+	the response to the destination file
+
+	Args:
+		endpoint (string, URL): the REST endpoint
+		token (string): a valid token to allow user to manipulate jobs
+		job_id (string): a valid Job ID to get the output of
+
+	Returns:
+		(string, URL): HTTP URL of job output archive file
+
+	Raises:
+		Passes any exceptions raised in cg_rest
+	"""
+	logger.debug('Getting Job Output for Job ID "%s"' %job_id)
+
+	params = {
+		'token' : token,
+		'id' : job_id
+	}
+
+	url = endpoint.rstrip('/') + '/joboutput'
+
+	response = cg_rest('GET', url, **params)
+
+	return response['result']['uri']
 
 def main() :
-	(parser,args,verbose) = parseArgs()
-	# Acquire required information (either from env or overwritten while parsing)
-	action = os.getenv('CG_ACTION','None').lower()
-	USERNAME = env_overwrite.get('username',
-		os.getenv('CG_USERNAME',''))
-	APPNAME = env_overwrite.get('appname', 
-		os.getenv('CG_APP_NAME',''))
-	JOBNAME = env_overwrite.get('name', 
-		os.getenv('CG_JOB_NAME',''))
-	OWNER = env_overwrite.get('owner', 
-		os.getenv('CG_OWNER_NAME',''))
-	URL = env_overwrite.get('url',
-		os.getenv('CG_API_URL',
-			'https://sandbox.cigi.illinois.edu/home/rest/')
-		)
-	TOKEN = env_overwrite.get('token',
-		os.getenv('CG_TOKEN',''))
-	if not TOKEN :
-		sys.stderr.write('No valid CG_TOKEN given\n')
-		exit()
-	# Make appropriate call or print help if action is not valid
-	if args.configfile and os.path.exists(args.configfile) :
-			launchJob(JOBNAME,
-				APPNAME,
-				OWNER,
-				URL,
-				TOKEN,
-				args.configfile,
-				verbose)
+	(args,action) = parse_args()
 
-main()
+	if not args.token :
+		logger.error('No valid CG_TOKEN given')
+		sys.exit(1)
+
+	try :
+		if (action == 'launch') :
+			if not (args.jobname) :
+				logger.error('No valid Job Name provided')
+				sys.exit(1)
+			elif not (args.appname) :
+				logger.error('No CG_APP_NAME found or '
+							'command line argument specified')
+				sys.exit(1)
+
+			computation = {}
+
+			if(args.ncpu != 0) :
+				computation['ncpu'] = args.ncpu
+			if(args.walltime != 0) :
+				computation['walltime'] = args.walltime
+
+			if args.configfile and os.path.exists(args.configfile) :
+				print launch_job(args.endpoint, args.token, args.jobname,
+						args.appname, args.username, args.configfile,
+						computation)
+			else :
+				print ('No valid job configuration file given')
+
+		elif (action == 'monitor') :
+			if not (args.jobid) :
+				logger.error('No CG_JOB_ID found or '
+							'command line argument specified')
+				sys.exit(1)
+
+			if args.destfile :
+				monitor_job(args.endpoint, args.token, 
+							args.jobid, args.destfile)
+
+			elif not os.path.exists("monitor_job_out.json") : # use as default
+				monitor_job(args.endpoint, args.token,
+							args.jobid, "monitor_job_out.json")
+
+			else : # if default path exists, don't overwrite it
+				logger.error('No destination file specified '
+							'for job monitor output')
+				sys.exit(1)
+
+		else :
+			if not (args.jobid) :
+				logger.error('No CG_JOB_ID found or '
+							'command line argument specified')
+				sys.exit(1)
+
+			print ("HTTP URL of job output archive file: ")
+			print get_job_output(args.endpoint, args.token, args.jobid)
+
+
+	except CGException as e :
+		logger.error(e)
+		sys.exit(1)
+
+if(__name__ == ("__main__")) :
+	main()
