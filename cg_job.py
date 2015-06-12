@@ -23,7 +23,7 @@ Get Job Output:
 	./cg_job.py output
 """
 
-from cg_token import CGException, log_response, cg_rest, logger_initialize
+from cg_token import CGException, cg_rest, logger_initialize
 import json
 import argparse
 import requests

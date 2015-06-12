@@ -24,7 +24,7 @@ Get App Info and Config and write to respective JSON files:
     ./cg_app.py getconfig --destfile getconfig_out.json
 """
 
-from cg_token import CGException, log_response, cg_rest, logger_initialize
+from cg_token import CGException, cg_rest, logger_initialize
 import json
 import argparse
 import requests
