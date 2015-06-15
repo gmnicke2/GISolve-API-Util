@@ -71,9 +71,10 @@ def parse_args() :
             "1: Parallel (Multi-Processor), 2: Parallel (GPU)")
     parser.add_argument("-if","--infofile",
         help="For Registering, path to information in JSON format. "
-            "File must have attributes version, info, and tags. "
-            "Refer to the GISolve API "
-            "Documentation for attribute information")
+            "File must have attributes 'longname', 'version', "
+            "'info', and 'tags'. "
+            "Refer to the GISolve API Documentation"
+            "for attribute information")
     parser.add_argument("-cf","--configfile", 
         help="For action 'configure' config file in JSON format")
     parser.add_argument("-df","--destfile", 
@@ -126,7 +127,7 @@ def register_app(endpoint, username, appname, token, apptype, info_filename) :
     data = {
         'token' : token,
         'app' : appname,
-        'longname' : "%s by %s" %(appname, username),
+        'longname' : info['longname'],
         'version': info['version'],
         'info' : info['info'],
         'author' : username,
