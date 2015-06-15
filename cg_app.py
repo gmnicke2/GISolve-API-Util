@@ -269,6 +269,12 @@ def main() :
     try :
         if action == 'register' :
             if args.infofile and os.path.exists(args.infofile) :
+                if not (0 <= args.type <= 2) :
+                    logger.error('App Type must be:\n0: Sequential\n'
+                                '1: Parallel(Multi-Processor)\n'
+                                '2: Parallel(GPU)')
+                    sys.exit(1)
+
                 print register_app(args.endpoint, args.username, 
                                     args.appname, args.token, 
                                     args.type, args.infofile) 
