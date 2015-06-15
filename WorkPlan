@@ -8,13 +8,13 @@ Plan:
   Uses requests library instead of pycURL
   Imported libraries : 
     os (for environmental variables), sys(for stderr writing), json (for requests/responses), argparse, requests (for REST calls), getpass (if user wants to specify a password)
-  2 Main Files (cg_app.py, cg_job.py) :
+  4 Main Files (cg_token/app/job/version.py) :
     executed with either command line arguments to fill [API URL, App Name, Client ID, Client IP, Username, Password], as well as additional arguments depending on file
         OR TAKEN IN FROM BASH ENVIRONMENTAL VARIABLES
     All arguments drawn from bash env variables unless otherwise supplied
-	EXCEPT for verbose/debug & dest/config/jobconfig files
+	EXCEPT for debug & dest/config/jobconfig files
     Missing arguments cause help to be printed and exit
-    Only print debug info/response data/etc. upon -d/--debug or -v/--verbose request
+    Only print debug info/response data/etc. upon -d/--debug request
     Add terminating '/' to URL if non-existent
   Demonstrate the use and integration of: 
     token issuing & revoking, 
@@ -22,6 +22,3 @@ Plan:
     retrieving app info/config,
     launching/monitoring a job,
     retrieving job output
-
-TODO: move cg_version.py into just a callable function definition in cg_token.py
-TODO: FINISH JOBS 
