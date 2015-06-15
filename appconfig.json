@@ -1,5 +1,53 @@
 {
-    "version": "V0.1",
-    "info": "<h2>Example Info</h2><p>Information about App</p>",
-    "tags": "Tag1, Tag2, Tag3, etc"
+   "description": "config of example application",
+   "name": "TESTAPP",
+   "parameters": {
+       "param0": {
+           "datatype": "integer",
+           "default": "500",
+           "description": "X-dimension resolution",
+           "label": "resolution_x",
+           "max": "1000",
+           "min": "50",
+           "name": "param0",
+           "optional": false
+       },
+       "param1": {
+           "datatype": "integer",
+           "default": "500",
+           "description": "Y-dimension resolution",
+           "label": "resolution_y",
+           "max": "1000",
+           "min": "50",
+           "name": "param1",
+           "optional": false
+       },
+       "param2": {
+           "datatype": "integer",
+           "default": "5",
+           "description": "K value of kNN search",
+           "label": "k",
+           "max": "100",
+           "min": "1",
+           "name": "param2",
+           "optional": false
+       },
+       "param3": {
+           "datatype": "url",
+           "default": "",
+           "description": "URL of the input point dataset in proprietary format",
+           "label": "input_file",
+           "name": "param3",
+           "optional": false
+       },
+       "param4": {
+           "datatype": "string",
+           "default": "",
+           "description": "",
+           "fixed": "results/output.dat",
+           "label": "results/output.dat",
+           "name": "param4",
+           "optional": false
+       }
+   }
 }

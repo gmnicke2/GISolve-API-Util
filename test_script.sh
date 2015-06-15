@@ -2,7 +2,7 @@
 APPNAME1="TEST1"
 APPNAME2="TEST2"
 JOBNAME1="TEST_JOB1"
-CONFIG_FILE="config.json"
+CONFIG_FILE="appconfig.json"
 GETINFO_FILE="getinfo_response.json"
 GETCONFIG_FILE="getconfig_response.json"
 MONITORJOB_FILE="monitor_response.json"
@@ -21,7 +21,7 @@ echo Issuing Token
 export CG_TOKEN=`./cg_token.py -d`
 echo DONE
 echo Registering $APPNAME
-export CG_APP_NAME=`./cg_app.py --appname=$APPNAME1 -d`
+export CG_APP_NAME=`./cg_app.py --appname=$APPNAME1 -d --infofile appinfo.json`
 echo App Created: \"$CG_APP_NAME\"
 echo DONE
 echo FIN
@@ -34,7 +34,7 @@ echo DONE
 echo Verifying \"$CG_TOKEN\"
 ./cg_token.py -d verify
 echo Registering $APPNAME
-export CG_APP_NAME=`./cg_app.py --appname=$APPNAME2 -d`
+export CG_APP_NAME=`./cg_app.py --appname=$APPNAME2 -d --infofile appinfo.json`
 echo App Created: \"$CG_APP_NAME\"
 echo DONE
 echo Configuring \"$CG_APP_NAME\" with config file \"$CONFIG_FILE\"
