@@ -116,6 +116,15 @@ def parse_args() :
     parser.add_argument("-t", "--token", 
         default=os.getenv('CG_TOKEN',''),
         help="Set Token for Verify/Revoke")
+    parser.add_argument("-l", "--lifetime",
+        type=long,
+        default=43200,
+        help="Set Lifetime for Token Issue in seconds"
+                ". minimum=3600 (1hr), maximum=12*3600 (12hr")
+    parser.add_argument("-b", "--binding",
+        type=int,
+        default=1,
+        help="1: Bind with IP Address, 0: Don't Bind")
     parser.add_argument("-c", "--clientid",
         default=os.getenv('CG_CLIENT_ID',''),
         help="Set Client ID for Verify")
@@ -206,14 +215,15 @@ password=<password>, ...)
 
     return response
 
-def issue_token(endpoint, username, password, lifetime=15*3600, binding=1) :
+def issue_token(endpoint, username, password, lifetime, binding) :
     """Calls the Gateway issueToken function and returns token.
 
     Args:
         endpoint (string, URL): the REST endpoint
         username (string): the user's login
         password (string): the user's password
-        lifetime (int): the lifetime of a token in seconds
+        lifetime (int): the lifetime of a token in seconds 
+                        (3600 <= lifetime <= 12*3600)
         binding (int): 1 if user wants token to be bound to user IP
                        0 else
 
@@ -301,7 +311,14 @@ def main() :
     
     try :
         if action == "issue" :
-            print issue_token(args.endpoint, args.username, args.password)
+            if ((args.binding not in [0,1]) or 
+                not (3600<=args.lifetime<=43200)) :
+                logger.error("Lifetime must be between 3600 and 43200,"
+                                "\nBinding must be 0 or 1")
+                sys.exit(1)
+
+            print issue_token(args.endpoint, args.username, args.password,
+                                args.lifetime, args.binding)
 
         else :
             if not args.token :

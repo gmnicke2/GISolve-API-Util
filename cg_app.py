@@ -64,6 +64,16 @@ def parse_args() :
     parser.add_argument("-t", "--token", 
         default=os.getenv('CG_TOKEN',''),
         help="Set Token")
+    parser.add_argument("--type",
+        type=int,
+        default=0,
+        help="For Registering, Type of Application. 0: Sequential, "
+            "1: Parallel (Multi-Processor), 2: Parallel (GPU)")
+    parser.add_argument("-if","--infofile",
+        help="For Registering, path to information in JSON format. "
+            "File must have attributes version, info, and tags. "
+            "Refer to the GISolve API "
+            "Documentation for attribute information")
     parser.add_argument("-cf","--configfile", 
         help="For action 'configure' config file in JSON format")
     parser.add_argument("-df","--destfile", 
@@ -88,7 +98,7 @@ def parse_args() :
 
     return (args,args.action.lower())
 
-def register_app(endpoint, username, appname, token) :
+def register_app(endpoint, username, appname, token, apptype, info_filename) :
     """Calls the Gateway Register Application function and returns the app name
 
     Args:
@@ -104,21 +114,28 @@ def register_app(endpoint, username, appname, token) :
         Passes any exceptions raised in cg_rest.
     """
 
+    logger.debug('App Info File: "' + info_filename + '"')
+
+    f = open(info_filename)
+    info = json.load(f)
+    f.close()
+    if not info :
+        logger.error("Info File incorrectly formatted")
+        sys.exit(1)
+
     data = {
         'token' : token,
         'app' : appname,
-        'longname' : appname + ' by %s' % username,
-        'version' : 'V0.1',
-        'info' : '<h2>%s</h2><p>Description of App (%s) '
-            'Goes Here</p><p>'
-            'Author: %s</p>' % (appname,appname,username),
+        'longname' : "%s by %s" %(appname, username),
+        'version': info['version'],
+        'info' : info['info'],
         'author' : username,
-        'tags' : 'test, app, %s' % username,
-        'type' : 0
+        'tags' : info['tags'],
+        'type' : apptype
     }
 
     url = endpoint.rstrip('/') + '/app'
-    logger.debug("Register app '%s' from '%s'" %(appname,url))
+    logger.debug("Registering app '%s' from '%s'" %(appname,url))
 
     response = cg_rest('POST', url, **data)
     
@@ -250,15 +267,21 @@ def main() :
 
     try :
         if action == 'register' :
-            print register_app(args.endpoint, args.username, 
-                                args.appname, args.token) 
+            if args.infofile and os.path.exists(args.infofile) :
+                print register_app(args.endpoint, args.username, 
+                                    args.appname, args.token, 
+                                    args.type, args.infofile) 
+
+            else :
+                logger.error("No valid App Info file path given")
+                sys.exit(1)
 
         elif action == 'configure' :
                 if args.configfile and os.path.exists(args.configfile) :
                     config_app(args.endpoint, args.appname, 
                                 args.token, args.configfile)
                 else :
-                    logger.error('Config File Doesn\'t Exist')
+                    logger.error("Config File Doesn't Exist")
                     sys.exit(1)
 
         elif action == 'getinfo' :
