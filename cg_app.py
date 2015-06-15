@@ -89,11 +89,11 @@ def parse_args() :
 
     if not args.endpoint :
         logger.error('CG_API (API url for REST calls) '
-                'not specified\n')
+                    'not specified\n')
         sys.exit(1)
 
     if args.action.lower() not in ['register','configure','getinfo',
-                        'getinfo','getconfig'] :
+                                    'getinfo','getconfig'] :
         logger.error('Invalid Action')
         sys.exit(1)
 
@@ -177,7 +177,7 @@ def get_app_info(endpoint, appname, token, dest_filename) :
         outfile.close()
 
     logger.debug('"%s" info successfully '
-            'written to "%s"' %(appname,dest_filename))
+                'written to "%s"' %(appname,dest_filename))
 
 def config_app(endpoint, appname, token, config_filename) :
     """Calls the Gateway Configure App function
@@ -215,7 +215,7 @@ def config_app(endpoint, appname, token, config_filename) :
     response = cg_rest('POST', url, **data)
 
     logger.debug('"%s" successfully configured from '
-            'config file "%s"' %(appname,config_filename))
+                'config file "%s"' %(appname,config_filename))
 
 def get_app_config(endpoint, appname, token, dest_filename) :
     """Calls the Gateway Get App Configuration function and writes
@@ -252,7 +252,7 @@ def get_app_config(endpoint, appname, token, dest_filename) :
         outfile.close()
 
     logger.debug('"%s" config successfully'
-            ' written to "%s"' %(appname,dest_filename))
+                ' written to "%s"' %(appname,dest_filename))
 
 def main() :
     (args,action) = parse_args()
@@ -263,7 +263,7 @@ def main() :
 
     if not args.appname :
         logger.error('No CG_APP_NAME found or '
-            'command line argument specified')
+                    'command line argument specified')
         sys.exit(1)
 
     try :
@@ -302,7 +302,7 @@ def main() :
             
             else : # if default path exists, don't overwrite it
                 logger.error('No destination file specified'
-                        ' for get app info')
+                            ' for get app info')
                 sys.exit(1)
 
         else :
@@ -316,7 +316,7 @@ def main() :
             
             else : # if default path exists, don't overwrite it
                 logger.error('No destination file specified'
-                    ' for get app config')
+                            ' for get app config')
                 sys.exit(1)
 
     except CGException as e :

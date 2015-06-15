@@ -42,7 +42,7 @@ def parse_args() :
 
     if not args.endpoint :
     	logger.error('CG_API (API url for REST calls) '
-    			'not specified\n')
+    				'not specified\n')
     	sys.exit(1)
 
     return args;
