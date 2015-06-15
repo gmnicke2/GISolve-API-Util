@@ -9,7 +9,8 @@ Plan:
   Imported libraries : 
     os (for environmental variables), sys(for stderr writing), json (for requests/responses), argparse, requests (for REST calls), getpass (if user wants to specify a password)
   4 Main Files (cg_token/app/job/version.py) :
-    executed with either command line arguments to fill [API URL, App Name, Client ID, Client IP, Username, Password], as well as additional arguments depending on file
+    executed with either command line arguments to fill [API URL, App Name, Job Name, Job ID, 
+    	Client ID, Client IP, Username, Password], as well as additional arguments depending on action
         OR TAKEN IN FROM BASH ENVIRONMENTAL VARIABLES
     All arguments drawn from bash env variables unless otherwise supplied
 	EXCEPT for debug & dest/config/jobconfig files
