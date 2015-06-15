@@ -200,7 +200,7 @@ password=<password>, ...)
     log_response(method, endpoint, response, kwargs)
 
     # If status is not provided, default to error.
-    if response.get('status','error') == 'error' :
+    if response.get('status','') and response.get('status','') == 'error' :
         logger.debug("Call fails with '%s'" %response['result']['message'])
         raise CGException(response['result'])
 

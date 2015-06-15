@@ -1,52 +1,64 @@
-from cg_extras import *
+#!/usr/bin/env python
+
+"""
+Utility to print the current API version for GISolve
+
+Print Version:
+	./cg_version.py
+"""
+
+from cg_token import CGException, cg_rest, logger_initialize
 import json
 import requests
-from requests import exceptions
 import argparse
-import os
+import os, sys, logging
 
 # Used to disable InsecureRequestWarning that occurs with this API
 requests.packages.urllib3.disable_warnings()
 
-env_overwrite = {}
+logger = logging.getLogger(__name__)
+
+def parse_args() :
+    """Defines command line positional and optional arguments and checks
+        for valid action input if present.
+        
+    Args: none
+
+    Returns: A (tuple) containing the following:
+        args (namespace) : used to overwrite env variables when necessary
+    """
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--debug",
+    	action="store_true",
+    	help='Allow debug info to be written to stderr')
+    parser.add_argument("-e", "--endpoint",
+    	default=os.getenv('CG_API',''),
+    	help="Set API url")
+
+    args = parser.parse_args()
+
+    logger_initialize(args.debug)
+
+    if not args.endpoint :
+    	logger.error('CG_API (API url for REST calls) '
+    			'not specified\n')
+    	sys.exit(1)
+
+    return args;
 
 def main() :
-	parser = argparse.ArgumentParser()
-	parser.add_argument("-r", "--url", 
-			help="Set API URL")
-	args = parser.parse_args()
-	if args.url :
-		env_overwrite['url'] = args.url
-	if (env_overwrite.get('url','') 
-		and not env_overwrite.get('url','').endswith('/')
-	   ) :
-		env_overwrite['url'] += '/'
-	elif (os.getenv('CG_API_URL', '') 
-		and not os.getenv('CG_API_URL','').endswith('/')
-	     ) :
-		os.environ['CG_API_URL'] += '/'
+	args = parse_args()
+
+	url = args.endpoint.rstrip('/') + '/version'
+
 	try :
-		request_ret = requests.get(
-			env_overwrite.get('url',
-				os.getenv('CG_API_URL',
-				'https://sandbox.cigi.illinois.edu/home/rest/')
-			)+'version',
-			timeout=50,
-			verify=False)
-	except (exceptions.ConnectionError, 
-		exceptions.HTTPError, 
-		exceptions.MissingSchema) :
-		sys.stderr.write('Problem with API url - ' 
-				'Is it entered correctly?\n')
-		sys.exit(1)
-	except (exceptions.Timeout) :
-		sys.stderr.write('Request timed out.\n')
-		sys.exit(1)
-	response_json = request_ret.json()
-	try :
-		print 'API Version: %s' %(response_json['version'])
-	except (KeyError,TypeError) :
-		sys.stderr.write('Version retrieval failed. (Check API Url)\n')
+		response = cg_rest('GET',url,timeout=50,verify=False)
+		print response['version']
+
+	except CGException as e :
+		logger.error(e)
 		sys.exit(1)
 
-main()
+if(__name__ == ("__main__")) :
+	main()
