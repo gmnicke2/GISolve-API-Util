@@ -133,11 +133,9 @@ def launch_job(endpoint, token, jobname, appname,
 		'name' : jobname,
 		'app' : appname,
 		'owner' : owner,
-		'config_filename' : config_filename
+		'config_filename' : config_filename,
+		'computation' : computation
 	}
-
-	if computation :
-		data['computation'] = computation
 
 	url = endpoint.rstrip('/') + '/job'
 
