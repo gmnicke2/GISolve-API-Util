@@ -120,7 +120,7 @@ def parse_args() :
         type=long,
         default=43200,
         help="Set Lifetime for Token Issue in seconds"
-                ". minimum=3600 (1hr), maximum=12*3600 (12hr")
+                ". minimum=3600 (1hr), maximum=12*3600 (12hr)")
     parser.add_argument("-b", "--binding",
         type=int,
         default=1,
