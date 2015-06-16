@@ -52,7 +52,7 @@ import requests
 import argparse
 from requests import exceptions as rex
 
-# Used to disable InsecureRloggerequestWarning that occurs with this API
+# This is used sed to disable InsecureRequestWarning.
 requests.packages.urllib3.disable_warnings()
 
 logger = logging.getLogger(__name__)
@@ -190,7 +190,7 @@ password=<password>, ...)
         if method.upper() == 'POST' or method.upper() == 'PUT' :
             r = requests.request(method.upper(), endpoint, timeout=50, 
                                 verify=False, headers=headers, data=kwargs)
-        else : # must be 'GET' or 'DELETE'
+        else : # Must be 'GET' or 'DELETE'
             r = requests.request(method.upper(), endpoint, timeout=50,
                                 verify=False, headers=headers, params=kwargs)
         r.raise_for_status()

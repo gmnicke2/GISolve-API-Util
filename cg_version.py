@@ -13,7 +13,7 @@ import requests
 import argparse
 import os, sys, logging
 
-# Used to disable InsecureRequestWarning that occurs with this API
+# This is used sed to disable InsecureRequestWarning.
 requests.packages.urllib3.disable_warnings()
 
 logger = logging.getLogger(__name__)

@@ -31,7 +31,7 @@ import requests
 import os, sys, logging
 import getpass
 
-# Used to disable InsecureRequestWarning that occurs with this API
+# This is used sed to disable InsecureRequestWarning.
 requests.packages.urllib3.disable_warnings()
 
 logger = logging.getLogger(__name__)
@@ -170,7 +170,7 @@ def get_app_info(endpoint, appname, token, dest_filename) :
 
     response = cg_rest('GET', url, **params)
 
-    # Dump the response JSON (the app info) into the destination file
+    # Dump the response JSON (the app info) into the destination file.
     with open(dest_filename, 'w') as outfile :
         json.dump(response, outfile, indent=4, separators=(',', ': '))
         outfile.write('\n')
@@ -245,7 +245,7 @@ def get_app_config(endpoint, appname, token, dest_filename) :
     
     response = cg_rest('GET', url, **params)
 
-    # Dump the response JSON (the app config) into the destination file
+    # Dump the response JSON (the app config) into the destination file.
     with open(dest_filename, 'w') as outfile :
         json.dump(response, outfile, indent=4, separators=(',', ': '))
         outfile.write('\n')
@@ -296,11 +296,11 @@ def main() :
                 get_app_info(args.endpoint, args.appname, 
                             args.token, args.destfile)
             
-            elif not os.path.exists("getinfo_out.json") : # use as default
+            elif not os.path.exists("getinfo_out.json") : # Use as default
                 get_app_info(args.endpoint, args.appname, 
                             args.token, "getinfo_out.json")
             
-            else : # if default path exists, don't overwrite it
+            else : # If default path exists, don't overwrite it.
                 logger.error('No destination file specified'
                             ' for get app info')
                 sys.exit(1)
@@ -310,11 +310,11 @@ def main() :
                 get_app_config(args.endpoint, args.appname, 
                                 args.token, args.destfile)
 
-            elif not os.path.exists("getconfig_out.json") : # use as default
+            elif not os.path.exists("getconfig_out.json") : # Use as default
                 get_app_config(args.endpoint, args.appname, 
                                 args.token, "getconfig_out.json")
             
-            else : # if default path exists, don't overwrite it
+            else : # If default path exists, don't overwrite it.
                 logger.error('No destination file specified'
                             ' for get app config')
                 sys.exit(1)

@@ -29,7 +29,7 @@ import argparse
 import requests
 import os, sys, logging
 
-# Used to disable InsecureRequestWarning that occurs with this API
+# This is used sed to disable InsecureRequestWarning.
 requests.packages.urllib3.disable_warnings()
 
 logger = logging.getLogger(__name__)
@@ -172,7 +172,7 @@ def monitor_job(endpoint, token, job_id, dest_filename) :
 
 	response = cg_rest('GET', url, **params)
 
-	# Dump the response JSON (the job monitor response) into destination file
+	# Dump the response JSON (the job monitor response) into destination file.
 	with open(dest_filename, 'w') as outfile :
 		json.dump(response, outfile, indent=4, separators=(',', ': '))
 		outfile.write('\n')
@@ -250,11 +250,11 @@ def main() :
 				monitor_job(args.endpoint, args.token, 
 							args.jobid, args.destfile)
 
-			elif not os.path.exists("monitor_job_out.json") : # use as default
+			elif not os.path.exists("monitor_job_out.json") : # Use as default
 				monitor_job(args.endpoint, args.token,
 							args.jobid, "monitor_job_out.json")
 
-			else : # if default path exists, don't overwrite it
+			else : # If default path exists, don't overwrite it.
 				logger.error('No destination file specified '
 							'for job monitor output')
 				sys.exit(1)
