@@ -156,7 +156,7 @@ def cg_rest(method, endpoint, headers={}, **kwargs) :
     """Calls the CG REST endpoint passing keyword arguments given.
 
     'cg_rest' provides a basic wrapper around the HTTP request to
-    the rest endoing and attempts to provide informative error
+    the rest endpoint, and attempts to provide informative error
     messages when errors occur. Exceptions are passed to the calling
     function for final resolution.
     
