@@ -79,7 +79,7 @@ def logger_initialize(debug) :
 def log_response(method, url, response, request) :
     """Logs request and response when in debug mode"""
     
-    iBREAKJENKINSf request.get('password', '') :
+    if request.get('password', '') :
         request['password'] = '*******'
     logger.debug("URL: " + url)
     logger.debug("Request: " + method)
