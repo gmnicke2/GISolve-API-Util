@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-i
+
 """
 Set of utilities to issue/verify/revoke a CG token with REST calls
 Requires valid username and password either in bash environment or
@@ -78,8 +78,8 @@ def logger_initialize(debug) :
 
 def log_response(method, url, response, request) :
     """Logs request and response when in debug mode"""
-
-    if request.get('password', '') :
+    
+    iBREAKJENKINSf request.get('password', '') :
         request['password'] = '*******'
     logger.debug("URL: " + url)
     logger.debug("Request: " + method)
